@@ -1,9 +1,362 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
-  <meta http-equiv="refresh" content="0; URL=login.html" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>VAIDYA — Accessible healthcare | Home</title>
+  <meta name="description" content="VAIDYA — Role-based patient & doctor platform with AI-assisted symptom suggestions, appointments, and nearby healthcare maps." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg: #f6fbff;
+      --card: #ffffff;
+      --muted: #5c6b75;
+      --accent: #1565c0;
+      --accent-2: #0d47a1;
+      --glass: rgba(255,255,255,0.7);
+      --radius: 12px;
+      --maxw: 1200px;
+    }
+    *{box-sizing:border-box}
+    body{font-family:Inter,system-ui,Arial,Helvetica,sans-serif;margin:0;background:linear-gradient(180deg,#f7fbff,#ffffff);color:#0f1724;line-height:1.45}
+    a{color:var(--accent);text-decoration:none}
+    header{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:white;padding:18px 20px;box-shadow:0 8px 30px rgba(13,71,161,0.12)}
+    .wrap{max-width:var(--maxw);margin:0 auto;padding:28px}
+    .brand{display:flex;align-items:center;gap:12px;font-weight:800;font-size:18px}
+    .brand-logo{width:46px;height:46px;border-radius:10px;background:linear-gradient(135deg,#ffffff20,#ffffff10);display:flex;align-items:center;justify-content:center;font-weight:800;color:white;border:1px solid rgba(255,255,255,0.06)}
+    nav{display:flex;gap:12px;align-items:center;margin-left:auto}
+    nav a, nav button{color:white;font-weight:600;padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.12);background:transparent;cursor:pointer}
+    header .top{display:flex;align-items:center;gap:18px;max-width:var(--maxw);margin:0 auto}
+    /* HERO */
+    .hero{display:grid;grid-template-columns:1fr 420px;gap:28px;align-items:center;padding:44px 0}
+    .hero h1{font-size:34px;margin:0 0 12px}
+    .hero p.lead{color:var(--muted);margin:0 0 18px}
+    .cta-row{display:flex;gap:12px;flex-wrap:wrap}
+    .btn{background:var(--accent);color:white;padding:10px 14px;border-radius:10px;border:none;font-weight:700;cursor:pointer;box-shadow:0 8px 20px rgba(21,101,192,0.12)}
+    .btn.ghost{background:white;color:var(--accent);border:1px solid #e6eefb}
+    .hero-card{background:var(--card);border-radius:14px;padding:18px;box-shadow:0 14px 40px rgba(12,38,72,0.06);border:1px solid rgba(13,71,161,0.04)}
+    .feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:18px}
+    .feature{background:linear-gradient(180deg,#ffffff,#fbfdff);padding:14px;border-radius:12px;border:1px solid #eef6ff}
+    .feature h4{margin:0 0 6px;font-size:15px}
+    .feature p{margin:0;color:var(--muted);font-size:13px}
+    /* How it works */
+    .how{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:28px}
+    .step{background:var(--card);padding:18px;border-radius:12px;box-shadow:0 8px 30px rgba(12,38,72,0.04);border:1px solid #f0f7ff}
+    .step h5{margin:0 0 8px}
+    .step p{margin:0;color:var(--muted);font-size:13px}
+    /* creators & links */
+    .cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:28px;align-items:start}
+    .person{display:flex;gap:12px;align-items:center;padding:14px;border-radius:12px;background:linear-gradient(180deg,#fff,#fbfdff);border:1px solid rgba(13,71,161,0.04)}
+    .avatar{width:72px;height:72px;border-radius:12px;object-fit:cover;background:#eaf3ff;display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--accent)}
+    .meta{flex:1}
+    .meta h4{margin:0 0 6px}
+    .meta p{margin:0;color:var(--muted);font-size:13px}
+    .links{display:flex;flex-direction:column;gap:8px;padding:14px;border-radius:12px;background:linear-gradient(180deg,#fff,#fbfdff);border:1px solid rgba(13,71,161,0.04)}
+    .links a{display:inline-block;padding:10px 12px;border-radius:8px;background:#f4f9ff;color:var(--accent);font-weight:700;border:1px solid rgba(21,101,192,0.06)}
+    /* contact */
+    .contact{display:grid;grid-template-columns:1fr 420px;gap:18px;margin-top:28px;align-items:start}
+    form.card{padding:18px}
+    label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px}
+    input[type="text"],input[type="email"],textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #e6eefb;background:white}
+    textarea{min-height:120px;resize:vertical}
+    .foot{margin-top:32px;padding:18px;border-radius:10px;background:#ffffffaa;border:1px solid rgba(13,71,161,0.04);display:flex;justify-content:space-between;gap:12px;align-items:center}
+    footer{padding:26px 20px;margin-top:30px;background:linear-gradient(180deg,#fbfdff,#f3f7ff)}
+    .small-muted{font-size:13px;color:var(--muted)}
+    /* responsive */
+    @media (max-width:980px){
+      .hero, .contact{grid-template-columns:1fr}
+      .feature-grid{grid-template-columns:repeat(2,1fr)}
+      .how{grid-template-columns:repeat(2,1fr)}
+      .cards{grid-template-columns:1fr}
+    }
+    @media (max-width:620px){
+      .feature-grid{grid-template-columns:1fr}
+      .how{grid-template-columns:1fr}
+    }
+
+    /* small UI niceties */
+    .badge{display:inline-block;background:#e6f2ff;color:var(--accent);padding:6px 10px;border-radius:999px;font-weight:700;font-size:13px}
+    .kpi{font-weight:800;color:var(--accent-2);font-size:22px}
+    .muted-2{color:#6b7780;font-size:13px}
+    .creator-links{display:flex;gap:8px;margin-top:8px}
+    .creator-links a{font-size:13px;padding:8px 10px;border-radius:8px;background:#fff;border:1px solid rgba(0,0,0,0.04)}
+  </style>
 </head>
 <body>
-  Redirecting...
+  <header>
+    <div class="top">
+      <div class="brand wrap" style="width:100%;display:flex">
+        <div class="brand-logo" aria-hidden="true">V</div>
+        <div style="display:flex;flex-direction:column">
+          <div style="font-weight:800">VAIDYA</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.9);font-weight:600">Accessible healthcare platform</div>
+        </div>
+
+        <nav style="margin-left:auto">
+          <!-- link to your deployed pages -->
+          <a href="login.html" title="Sign in">Login</a>
+          <a href="register.html" title="Create account" style="margin-left:6px">Register</a>
+          <a href="dashboard.html" title="Open dashboard" style="margin-left:6px">Dashboard</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap" role="main" aria-labelledby="main-heading">
+    <section class="hero" aria-label="Hero">
+      <div>
+        <span class="badge">AI + Telehealth</span>
+        <h1 id="main-heading">VAIDYA — Fast, reliable healthcare guidance for patients & doctors</h1>
+        <p class="lead">VAIDYA combines role-based patient & doctor dashboards, AI-assisted symptom suggestions, appointment booking, online consultations, and nearby healthcare maps into one trustworthy platform.</p>
+
+        <div class="cta-row">
+          <a class="btn" href="register.html" title="Register">Create an account</a>
+          <a class="btn ghost" href="login.html" title="Login">Sign in</a>
+        </div>
+
+        <div style="margin-top:18px;color:var(--muted);display:flex;gap:18px;align-items:center">
+          <div>
+            <div class="kpi">✔ Trusted</div>
+            <div class="muted-2">Designed for clinics & patients</div>
+          </div>
+          <div>
+            <div class="kpi">★ AI-Smart</div>
+            <div class="muted-2">Symptom → Suggestion engine</div>
+          </div>
+        </div>
+
+        <div class="feature-grid" aria-hidden="false">
+          <div class="feature">
+            <h4>Role-based dashboards</h4>
+            <p>Separate, secure dashboards for patients and doctors so everyone gets exactly the tools they need.</p>
+          </div>
+          <div class="feature">
+            <h4>AI Symptom search</h4>
+            <p>Type symptoms and receive suggested clinical & household remedies — always reviewed by a doctor before prescription.</p>
+          </div>
+          <div class="feature">
+            <h4>Appointments & Video</h4>
+            <p>Patients book slots and consult doctors via chat, call, or video. Doctors manage availability in seconds.</p>
+          </div>
+        </div>
+      </div>
+
+      <aside class="hero-card" aria-label="Quick tour">
+        <h3 style="margin-top:0">Quick tour</h3>
+        <p style="color:var(--muted);margin-bottom:12px">Try in this order:</p>
+        <ol style="padding-left:18px;margin:0 0 12px;color:var(--muted)">
+          <li>Register as a patient → update profile & allergies</li>
+          <li>Use the AI search to get initial suggestions</li>
+          <li>Book an appointment or request a teleconsult</li>
+        </ol>
+        <div style="margin-top:14px">
+          <a class="creator-links" href="login.html" title="Go to login">Login</a>
+          <a class="creator-links" href="register.html" title="Go to register">Register</a>
+          <a class="creator-links" href="dashboard.html" title="Open dashboard">Dashboard</a>
+        </div>
+      </aside>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section aria-label="How it works">
+      <h2 style="margin-top:10px">How VAIDYA works</h2>
+      <div class="how">
+        <div class="step">
+          <h5>1. Register & profile</h5>
+          <p>Create a secure account, add age/health status and allergies so doctors get the context they need.</p>
+        </div>
+        <div class="step">
+          <h5>2. Symptom assistant</h5>
+          <p>Describe symptoms in plain language — VAIDYA returns suggested diagnoses and household care to help you triage quickly.</p>
+        </div>
+        <div class="step">
+          <h5>3. Book & consult</h5>
+          <p>Book an in-clinic or online appointment. Doctors can accept, decline, or propose alternate times.</p>
+        </div>
+      </div>
+
+      <h2 style="margin-top:22px">Features in depth</h2>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:8px">
+        <div style="flex:1;min-width:200px" class="step">
+          <h5>Doctor cards & profiles</h5>
+          <p>View verified doctor profiles, specialties, ratings and contact options (call/video).</p>
+        </div>
+        <div style="flex:1;min-width:200px" class="step">
+          <h5>Nearby resources</h5>
+          <p>Map integration for clinics, pharmacies and emergency services near you.</p>
+        </div>
+        <div style="flex:1;min-width:200px" class="step">
+          <h5>Privacy & security</h5>
+          <p>Data is stored securely. Use an HTTPS deployment and follow local medical-data regulations for production.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CREATORS + LINKS -->
+    <section aria-label="Team and links">
+      <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-top:22px">
+        <div style="flex:1;min-width:320px">
+          <h3>Creators & Team</h3>
+          <div class="cards">
+            <!-- Owner -->
+            <div class="person">
+              <div class="avatar" aria-hidden="true">OS</div>
+              <div class="meta">
+                <h4>Owner — <span style="font-weight:600">Dr. Owner Name</span></h4>
+                <p>Founder & medical director — responsible for clinical operations and doctor verification.</p>
+                <div class="creator-links">
+                  <a href="mailto:owner@example.com" title="Email owner">Email</a>
+                  <a href="#" title="Owner profile">Profile</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Creator -->
+            <div class="person">
+              <div class="avatar" aria-hidden="true">CR</div>
+              <div class="meta">
+                <h4>Creator — <span style="font-weight:600">Roshan Kumar Singh</span></h4>
+                <p>Project lead — product, UX and content.</p>
+                <div class="creator-links">
+                  <a href="#" title="Creator profile">Portfolio</a>
+                  <a href="mailto:creator@example.com">Email</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside style="width:320px">
+          <h3>Important links</h3>
+          <div class="links" role="navigation" aria-label="Important links">
+            <a href="register.html" title="Register">Register — create an account</a>
+            <a href="login.html" title="Login">Login — access your dashboard</a>
+            <a href="dashboard.html" title="Dashboard">Dashboard — patient & doctor area</a>
+            <a href="#contact" title="Contact us">Contact & support</a>
+            <a href="#" title="Privacy">Privacy & security</a>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- HELP & FAQ -->
+    <section aria-label="Help" style="margin-top:20px">
+      <h3>Help & FAQ</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px">
+        <div class="step">
+          <strong>Q: Is AI replacing doctors?</strong>
+          <p class="small-muted">A: No. VAIDYA's AI provides suggestions to speed triage — all prescriptions must be verified by a licensed doctor before being finalised.</p>
+        </div>
+        <div class="step">
+          <strong>Q: How do I become a verified doctor?</strong>
+          <p class="small-muted">A: Contact the admin with your medical credentials. The admin reviews and marks verified doctors in the system.</p>
+        </div>
+        <div class="step">
+          <strong>Q: Can I edit my profile picture?</strong>
+          <p class="small-muted">A: Yes — after logging in, go to Profile → Edit and upload a new image.</p>
+        </div>
+        <div class="step">
+          <strong>Q: Where are my prescriptions stored?</strong>
+          <p class="small-muted">A: Prescriptions and consultation records are stored in your secure account under 'My prescriptions'.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" aria-label="Contact us" style="margin-top:22px">
+      <h3>Contact us</h3>
+      <div class="contact">
+        <form class="card" id="contactForm" onsubmit="return false" aria-label="Contact form">
+          <label for="cname">Full name</label>
+          <input id="cname" type="text" placeholder="Your full name" required>
+
+          <label for="cemail">Email</label>
+          <input id="cemail" type="email" placeholder="you@domain.com" required>
+
+          <label for="cmessage">Message</label>
+          <textarea id="cmessage" placeholder="How can we help?" required></textarea>
+
+          <div style="display:flex;gap:10px;margin-top:12px">
+            <button id="sendBtn" class="btn" type="button">Send message</button>
+            <button id="mailtoBtn" class="btn ghost" type="button">Open email</button>
+          </div>
+
+          <div style="margin-top:12px" class="small-muted">Or email us: <strong><a href="mailto:support@vaidya.example">support@vaidya.example</a></strong></div>
+        </form>
+
+        <aside style="padding:18px;border-radius:12px;background:var(--card);border:1px solid #eef6ff">
+          <h4>Office</h4>
+          <p class="small-muted">VAIDYA — Demo office</p>
+          <p class="small-muted">123 Healthcare St, City, Country</p>
+          <p style="margin-top:8px"><strong>Phone:</strong> +91 99999 99999</p>
+          <p style="margin-top:6px"><strong>Support:</strong> support@vaidya.example</p>
+          <div style="margin-top:12px">
+            <a class="btn" href="login.html">Get support (Login)</a>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <div class="foot">
+      <div>
+        <div style="font-weight:800">VAIDYA</div>
+        <div class="small-muted">AI-assisted triage • Doctor appointment booking • Nearby health map</div>
+      </div>
+      <div style="text-align:right">
+        <div class="small-muted">© <span id="year"></span> VAIDYA. All rights reserved.</div>
+        <div style="margin-top:8px"><a href="#" class="small-muted">Terms</a> · <a href="#" class="small-muted">Privacy</a></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="wrap">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+      <div><strong>VAIDYA</strong> — Trusted digital healthcare</div>
+      <div class="small-muted">Built with ❤️ · Designed for clinics & patients</div>
+    </div>
+  </footer>
+
+  <script>
+    // small interactivity: contact form (mailto fallback)
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    const sendBtn = document.getElementById('sendBtn');
+    const mailtoBtn = document.getElementById('mailtoBtn');
+
+    function validateContact(){
+      const name = document.getElementById('cname').value.trim();
+      const email = document.getElementById('cemail').value.trim();
+      const msg = document.getElementById('cmessage').value.trim();
+      if(!name || !email || !msg) return {ok:false, err:'Please fill all fields.'};
+      // basic email
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return {ok:false, err:'Enter a valid email.'};
+      return {ok:true, name, email, msg};
+    }
+
+    sendBtn && sendBtn.addEventListener('click', () => {
+      const v = validateContact();
+      if(!v.ok){ alert(v.err); return; }
+      // in a real app: POST to support endpoint or serverless function
+      // here we open mailto as demonstration
+      const subject = encodeURIComponent('VAIDYA Contact — ' + v.name);
+      const body = encodeURIComponent(`Name: ${v.name}\nEmail: ${v.email}\n\nMessage:\n${v.msg}`);
+      // try to open mail client
+      window.location.href = `mailto:support@vaidya.example?subject=${subject}&body=${body}`;
+    });
+
+    mailtoBtn && mailtoBtn.addEventListener('click', () => {
+      const v = validateContact();
+      if(!v.ok){ alert(v.err); return; }
+      const subject = encodeURIComponent('VAIDYA Contact — ' + v.name);
+      const body = encodeURIComponent(`Name: ${v.name}\nEmail: ${v.email}\n\nMessage:\n${v.msg}`);
+      window.open(`mailto:support@vaidya.example?subject=${subject}&body=${body}`, '_blank');
+    });
+
+    // accessibility: keyboard focus
+    document.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape') document.activeElement.blur();
+    });
+  </script>
 </body>
 </html>
