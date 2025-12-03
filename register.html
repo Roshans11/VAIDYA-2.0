@@ -2,23 +2,25 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>VAIDYA — Register</title>
+  <title>VAIDYA — Register (debug)</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
     body{font-family:Inter,system-ui,Arial;margin:0;background:#f6fbff;color:#102a43}
     .wrap{max-width:680px;margin:36px auto;padding:22px}
     .card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 8px 30px rgba(10,20,40,0.06)}
     label{display:block;margin-top:10px;font-size:13px;color:#344a5f}
-    input,select{width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid #d7e3f0}
+    input,select,textarea{width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid #d7e3f0}
     button{margin-top:14px;padding:10px 14px;border-radius:8px;border:none;background:#1565c0;color:#fff;font-weight:600;cursor:pointer}
     .muted{font-size:13px;color:#516a7a;margin-top:8px}
+    #statusBox{margin-top:12px;padding:12px;background:#f0f7ff;border-left:4px solid #1565c0;border-radius:8px;white-space:pre-wrap;font-family:monospace;font-size:13px;color:#0b3b61;max-height:220px;overflow:auto}
+    .error{color:#b00020}
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="card">
       <h1>Create your VAIDYA account</h1>
-      <p class="muted">Register as a Patient or Doctor</p>
+      <p class="muted">Register as a Patient or Doctor — debug mode (shows status updates).</p>
 
       <form id="registerForm">
         <label>Full name</label><input id="name" required />
@@ -34,17 +36,18 @@
         <button id="registerBtn" type="submit">Register & Sign in</button>
         <div class="muted">Already have account? <a href="login.html">Login</a></div>
       </form>
+
+      <div id="statusBox" aria-live="polite">Status: idle</div>
     </div>
   </div>
 
-  <!-- Modular Firebase v12.6 -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
     import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
     import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-storage.js";
 
-    // <- YOUR FIREBASE CONFIG (already provided by you)
+    // YOUR firebase config (the one you gave earlier)
     const firebaseConfig = {
       apiKey: "AIzaSyDav5CAOhVEUs7czI8zAO9Jogn-B30OLSU",
       authDomain: "vaidya-244c9.firebaseapp.com",
@@ -55,23 +58,40 @@
       measurementId: "G-127KRB6XQZ"
     };
 
-    // Init
+    // init
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
     const storage = getStorage(app);
 
-    // Helpers
     const $ = id => document.getElementById(id);
+    const statusBox = $('statusBox');
+    function status(msg, level='info'){
+      const time = new Date().toLocaleTimeString();
+      const line = `[${time}] ${msg}`;
+      // append visible
+      statusBox.textContent = statusBox.textContent + '\n' + line;
+      console.log('[register-debug]', msg);
+      if(level === 'error') statusBox.classList.add('error');
+      statusBox.scrollTop = statusBox.scrollHeight;
+    }
+    function resetStatus(){ statusBox.textContent = 'Status: idle'; statusBox.classList.remove('error'); }
 
-    // Debug helper
-    function log(...args){ console.log('[register]', ...args); }
+    // safety timeout helper
+    function withTimeout(promise, ms=20000){
+      let timeout;
+      const t = new Promise((_,reject) => {
+        timeout = setTimeout(()=> reject(new Error('Operation timed out after ' + ms + 'ms')), ms);
+      });
+      return Promise.race([promise.then(v=>{clearTimeout(timeout); return v}), t]);
+    }
 
-    // Form submit
+    // form submit
     $('registerForm').addEventListener('submit', async (ev) => {
       ev.preventDefault();
+      resetStatus();
       try {
-        log('Submit clicked - collecting form values');
+        // gather
         const name = $('name').value.trim();
         const age = $('age').value.trim();
         const phone = $('phone').value.trim();
@@ -81,52 +101,57 @@
         const healthStatus = $('healthStatus').value.trim();
         const allergies = $('allergies').value.trim();
 
-        if (!name || !email || !password) {
-          alert('Please fill name, email and password.');
+        if(!name || !email || !password){
+          status('Missing required fields (name/email/password)', 'error');
+          alert('Please fill name, email and password');
           return;
         }
 
-        // Disable the button to avoid double submits
+        // UI lock
         $('registerBtn').disabled = true;
         $('registerBtn').textContent = 'Registering...';
+        status('Starting registration for ' + email);
 
-        log('Calling createUserWithEmailAndPassword', email);
-        const cred = await createUserWithEmailAndPassword(auth, email, password);
-        log('User created', cred.user.uid);
+        // 1) create auth user
+        status('Creating auth user...');
+        const cred = await withTimeout(createUserWithEmailAndPassword(auth, email, password), 20000);
+        status('Auth user created: uid = ' + cred.user.uid);
 
-        // update displayName immediately (if available)
+        // 2) update displayName on auth (best-effort)
         try {
-          await updateProfile(cred.user, { displayName: name });
-          log('Profile displayName updated');
-        } catch (upErr) {
+          status('Updating auth profile displayName...');
+          await withTimeout(updateProfile(cred.user, { displayName: name }), 10000);
+          status('Display name updated.');
+        } catch(upErr){
           console.warn('updateProfile failed', upErr);
+          status('Warning: could not update displayName: ' + (upErr.message || upErr), 'error');
         }
 
-        // upload optional photo
+        // 3) optional photo upload
         let photoURL = '';
         const fileInput = $('photoInput');
-        if (fileInput?.files && fileInput.files[0]) {
+        if(fileInput?.files && fileInput.files[0]){
           try {
             const file = fileInput.files[0];
+            status('Uploading profile photo (' + file.name + ')...');
             const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
             const path = `profiles/${cred.user.uid}/avatar_${Date.now()}.${ext}`;
             const storageRef = ref(storage, path);
-            log('Uploading photo to', path);
-            await uploadBytes(storageRef, file);
-            photoURL = await getDownloadURL(storageRef);
-            log('Photo uploaded, URL:', photoURL);
+            await withTimeout(uploadBytes(storageRef, file), 30000);
+            photoURL = await withTimeout(getDownloadURL(storageRef), 15000);
+            status('Photo uploaded: ' + photoURL);
 
-            // update user profile again with photo (best-effort)
-            try {
-              await updateProfile(cred.user, { photoURL });
-              log('User photoURL updated on auth user');
-            } catch (e){ console.warn('update profile photo failed', e); }
-          } catch (fileErr) {
-            console.warn('Photo upload failed', fileErr);
+            // update auth profile photoURL
+            try { await withTimeout(updateProfile(cred.user, { photoURL }), 10000); status('Auth photoURL updated.'); } catch(e){ console.warn('updateProfile photo failed', e); }
+          } catch(fileErr){
+            console.warn('photo upload failed', fileErr);
+            status('Warning: photo upload failed: ' + (fileErr.message || fileErr), 'error');
           }
+        } else {
+          status('No profile photo provided.');
         }
 
-        // Save user doc to Firestore
+        // 4) write Firestore user doc
         const userDoc = {
           name,
           age: age ? Number(age) : null,
@@ -139,18 +164,19 @@
           verified: role === 'doctor' ? false : true,
           createdAt: serverTimestamp()
         };
+        status('Saving user document to Firestore...');
+        await withTimeout(setDoc(doc(db, 'users', cred.user.uid), userDoc), 20000);
+        status('User document saved in Firestore.');
 
-        log('Saving user doc to Firestore', userDoc);
-        await setDoc(doc(db, 'users', cred.user.uid), userDoc);
-        log('User document saved');
-
-        // Inform user and go to login (use replace to avoid back button returning to form)
-        alert('Registration successful! You will now be redirected to the login page.');
-        // Use replace so browser history doesn't keep the registration form
+        // success
+        alert('Registration successful. Redirecting to login...');
+        status('All done — redirecting to login.html');
+        // use replace so browser back doesn't go back to filled register form
         window.location.replace('login.html');
 
-      } catch (err) {
-        console.error('[register] error', err);
+      } catch(err){
+        console.error('Registration error', err);
+        status('Registration failed: ' + (err?.message || err) , 'error');
         alert('Registration failed: ' + (err?.message || err));
         // re-enable
         $('registerBtn').disabled = false;
