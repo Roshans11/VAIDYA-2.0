@@ -1,131 +1,278 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>VAIDYA — Dashboard</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <style>
-    body{font-family:Inter,system-ui,Arial;margin:0;background:linear-gradient(180deg,#f7fbff,#ffffff);color:#102a43}
-    header{background:linear-gradient(90deg,#1565c0,#0d47a1);padding:14px;color:#fff;display:flex;align-items:center;justify-content:space-between}
-    .wrap{max-width:1100px;margin:22px auto;padding:18px}
-    .card{background:#fff;padding:18px;border-radius:12px;box-shadow:0 10px 30px rgba(10,20,40,0.06)}
-    .profile{display:flex;gap:14px;align-items:center}
-    .avatar{width:72px;height:72px;border-radius:12px;object-fit:cover;border:2px solid rgba(0,0,0,0.06)}
-    .btn{padding:8px 12px;border-radius:8px;border:none;background:#fff;color:#0d47a1;font-weight:700;cursor:pointer}
-    .link{color:#1565c0;cursor:pointer;text-decoration:underline}
-  </style>
-</head>
-<body>
-  <header>
-    <div style="display:flex;align-items:center;gap:12px">
-      <strong style="font-size:18px">VAIDYA</strong>
-    </div>
-    <div id="hdrRight"></div>
-  </header>
+<meta charset="UTF-8" />
+<title>VAIDYA — Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <div class="wrap">
-    <div id="profileCard" class="card" style="display:none">
-      <div class="profile">
-        <img id="avatar" class="avatar" src="" alt="avatar"/>
-        <div>
-          <div id="name" style="font-weight:700;font-size:18px">User</div>
-          <div id="role" style="color:#566b7a;font-size:14px">Role</div>
-          <div id="contact" style="margin-top:8px;color:#2b3b46;font-size:14px"></div>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+  :root {
+    --gradient: linear-gradient(135deg,#0d47a1,#1565c0,#42a5f5);
+    --glass-bg: rgba(255,255,255,0.14);
+    --glass-border: rgba(255,255,255,0.22);
+    --radius: 18px;
+  }
+  *{box-sizing:border-box;font-family:Inter,system-ui,Arial}
+
+  body{
+    margin:0;
+    background:var(--gradient);
+    min-height:100vh;
+    padding:22px;
+    color:white;
+  }
+
+  /* HEADER */
+  .header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:var(--glass-bg);
+    padding:16px 20px;
+    border-radius:var(--radius);
+    border:1px solid var(--glass-border);
+    backdrop-filter:blur(14px);
+    box-shadow:0 8px 40px rgba(0,0,0,0.25);
+  }
+
+  .user-area{
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+
+  .avatar{
+    width:58px;height:58px;border-radius:50%;
+    border:2px solid rgba(255,255,255,0.3);
+    object-fit:cover;
+    background:#ffffff22;
+    display:flex;align-items:center;justify-content:center;
+    font-size:26px;
+    font-weight:700;
+    color:white;
+  }
+
+  .username{font-size:22px;font-weight:800}
+
+  .logout-btn{
+    background:white;color:#0d47a1;font-weight:700;
+    padding:10px 16px;border-radius:10px;border:none;
+    cursor:pointer;
+    transition:0.25s;
+  }
+  .logout-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 18px rgba(255,255,255,0.3);
+  }
+
+  /* CARD */
+  .card{
+    margin-top:24px;
+    background:white;
+    color:#0d2c47;
+    padding:22px;
+    border-radius:var(--radius);
+    box-shadow:0 10px 35px rgba(0,0,0,0.18);
+    border:1px solid #dfebf5;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:16px;
+    margin-top:18px;
+  }
+
+  .feature-box{
+    background:#f6fbff;
+    padding:18px;
+    border-radius:14px;
+    border:1px solid #e8eef5;
+    box-shadow:0 6px 16px rgba(0,0,0,0.06);
+  }
+
+  .feature-box i{font-size:30px;color:#1565c0;}
+
+  .feature-title{
+    margin-top:10px;
+    font-size:18px;
+    font-weight:700;
+    color:#0d47a1;
+  }
+
+  .feature-desc{font-size:13px;color:#45617a;margin-top:4px;}
+
+  /* AI Assistant Styles */
+  .ai-box{
+    margin-top:22px;
+    background:#f6fbff;
+    padding:18px;
+    border-radius:14px;
+    border:1px solid #dde7f0;
+    box-shadow:0 6px 16px rgba(0,0,0,0.06);
+  }
+
+  .btn-primary{
+    background:#1565c0;
+    color:white;
+    border:none;
+    padding:10px 16px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:700;
+  }
+
+  .btn-ghost{
+    background:#eaf2ff;
+    color:#0d47a1;
+    padding:10px 16px;
+    border-radius:10px;
+    cursor:pointer;
+    border:none;
+  }
+
+  textarea,input{
+    border-radius:8px;
+    border:1px solid #cfd9e6;
+  }
+</style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="user-area">
+      <div id="userAvatar" class="avatar"></div>
+      <div id="userName" class="username">Loading...</div>
+    </div>
+    <button class="logout-btn" id="logoutBtn">Logout</button>
+  </div>
+
+  <!-- PATIENT DASHBOARD -->
+  <div id="patientDashboard" class="card" style="display:none;">
+    <h2>Patient Dashboard</h2>
+
+    <p>Welcome! Use AI to find cures, book doctors, take guidance and manage your health.</p>
+
+    <!-- 🔥 AI ASSISTANT BOX ADDED HERE -->
+    <div class="ai-box">
+      <h3><i class="fa-solid fa-stethoscope"></i> AI Symptom Assistant</h3>
+      <p class="small">Enter your symptoms. The assistant will ask follow-up questions and give medical + household cures.</p>
+
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <input id="symptomText" placeholder="Example: headache, cold, chest pain" style="flex:1;padding:10px;">
+        <button id="startAiBtn" class="btn-primary">Start Diagnosis</button>
+      </div>
+
+      <div id="aiQuestionArea" style="margin-top:16px;display:none;">
+        <div id="aiQuestionText" style="font-weight:700;color:#0d47a1;"></div>
+        <textarea id="aiAnswerInput" placeholder="Type your answer..." style="width:100%;min-height:60px;margin-top:6px;padding:10px;"></textarea>
+
+        <div style="display:flex;gap:8px;margin-top:10px;">
+          <button id="aiNextBtn" class="btn-primary">Next</button>
+          <button id="aiCancelBtn" class="btn-ghost">Cancel</button>
         </div>
       </div>
-      <div style="margin-top:12px" id="extra"></div>
+
+      <div id="aiResultArea" style="margin-top:16px;display:none;">
+        <h4>Result</h4>
+        <div id="aiResultContent" style="white-space:pre-wrap;background:white;padding:14px;border-radius:10px;border:1px solid #ddd;"></div>
+
+        <button id="saveAiBtn" class="btn-primary" style="margin-top:12px;">Save to My Records</button>
+      </div>
+
+      <div id="aiStatus" style="margin-top:12px;font-family:monospace;color:#173b5a;display:none;"></div>
     </div>
 
-    <div id="patientArea" class="card" style="display:none;margin-top:18px">
-      <h3>Patient Actions</h3>
-      <p>Search symptoms, book appointments, view prescriptions — (placeholders).</p>
-      <div style="margin-top:10px"> <a class="link" href="javascript:location.reload()">Refresh profile</a></div>
-    </div>
+    <!-- Other patient features -->
+    <div class="grid">
+      <div class="feature-box">
+        <i class="fa-solid fa-user-doctor"></i>
+        <div class="feature-title">Find Doctors</div>
+        <div class="feature-desc">View specialists & book appointments instantly.</div>
+      </div>
 
-    <div id="doctorArea" class="card" style="display:none;margin-top:18px">
-      <h3>Doctor Actions</h3>
-      <p>Manage slots, view bookings, consult patients (placeholders).</p>
-      <div style="margin-top:10px"> <a class="link" href="javascript:location.reload()">Refresh profile</a></div>
+      <div class="feature-box">
+        <i class="fa-solid fa-video"></i>
+        <div class="feature-title">Video Consultation</div>
+        <div class="feature-desc">High-quality telemedicine video calls.</div>
+      </div>
+
+      <div class="feature-box">
+        <i class="fa-solid fa-notes-medical"></i>
+        <div class="feature-title">Your Health Records</div>
+        <div class="feature-desc">Manage health history & reports easily.</div>
+      </div>
     </div>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
-    // storage not strictly needed here, but imported if you want to use it
-    import { getStorage } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-storage.js";
+  <!-- DOCTOR DASHBOARD -->
+  <div id="doctorDashboard" class="card" style="display:none;">
+    <h2>Doctor Dashboard</h2>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyDav5CAOhVEUs7czI8zAO9Jogn-B30OLSU",
-      authDomain: "vaidya-244c9.firebaseapp.com",
-      projectId: "vaidya-244c9",
-      storageBucket: "vaidya-244c9.firebasestorage.app",
-      messagingSenderId: "541936193390",
-      appId: "1:541936193390:web:bd9bcb63230501126bbb7f",
-      measurementId: "G-127KRB6XQZ"
-    };
+    <p>Manage appointments, set availability, and assist your patients using smart tools.</p>
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const storage = getStorage(app);
+  </div>
 
-    const $ = id => document.getElementById(id);
-    const hdrRight = $('hdrRight');
+<!------------------ FIREBASE SCRIPT ------------------->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-    function renderHeader(name, avatar) {
-      hdrRight.innerHTML = `
-        <div style="display:flex;align-items:center;gap:10px">
-          <img src="${avatar || ''}" alt="a" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.12)" />
-          <div style="color:white;font-weight:600">${name || ''}</div>
-          <button id="logoutBtn" class="btn">Logout</button>
-        </div>
-      `;
-      const lb = document.getElementById('logoutBtn');
-      if (lb) lb.addEventListener('click', async () => { await signOut(auth); location.href = 'login.html'; });
-    }
+const firebaseConfig = {
+  apiKey: "AIzaSyDav5CAOhVEUs7czI8zAO9Jogn-B30OLSU",
+  authDomain: "vaidya-244c9.firebaseapp.com",
+  projectId: "vaidya-244c9",
+  storageBucket: "vaidya-244c9.firebasestorage.app",
+  messagingSenderId: "541936193390",
+  appId: "1:541936193390:web:bd9bcb63230501126bbb7f",
+  measurementId: "G-127KRB6XQZ"
+};
 
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        // not logged in
-        location.href = 'login.html';
-        return;
-      }
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-      // load user doc
-      let profile = null;
-      try {
-        const snap = await getDoc(doc(db, 'users', user.uid));
-        if (snap.exists()) profile = snap.data();
-      } catch (e) { console.warn('load user doc', e); }
+/* DEFAULT AVATAR ICON */
+const defaultAvatar = `<i class="fa-solid fa-user"></i>`;
 
-      const name = (profile && profile.name) || user.displayName || (user.email ? user.email.split('@')[0] : 'User');
-      const role = (profile && profile.role) || 'patient';
-      const photo = (profile && profile.photoURL) || user.photoURL || '';
+/* LOAD USER DATA */
+onAuthStateChanged(auth, async (user) => {
+  if (!user) { window.location.href = "login.html"; return; }
 
-      renderHeader(name, photo);
+  const snap = await getDoc(doc(db, "users", user.uid));
+  if (!snap.exists()) return;
 
-      // fill profile card
-      $('avatar').src = photo || `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='72' height='72'><rect width='100%' height='100%' fill='%231565c0'></rect><text x='50%' y='55%' font-size='32' fill='white' text-anchor='middle'>${encodeURIComponent(name.charAt(0).toUpperCase())}</text></svg>`;
-      $('name').innerText = name;
-      $('role').innerText = role.charAt(0).toUpperCase() + role.slice(1);
-      $('contact').innerText = profile?.phone ? 'Phone: ' + profile.phone : '';
+  const data = snap.data();
 
-      $('profileCard').style.display = '';
-      if (role === 'patient') {
-        $('patientArea').style.display = '';
-        $('doctorArea').style.display = 'none';
-        $('extra').innerHTML = `<div style="margin-top:10px;color:#3b4b5a">Health: ${profile?.healthStatus || '—'} • Allergies: ${profile?.allergies || '—'}</div>`;
-      } else if (role === 'doctor') {
-        $('doctorArea').style.display = '';
-        $('patientArea').style.display = 'none';
-        $('extra').innerHTML = `<div style="margin-top:10px;color:#3b4b5a">Doctor profile — Verified: ${profile?.verified ? 'Yes' : 'No'}</div>`;
-      } else {
-        $('patientArea').style.display = '';
-        $('doctorArea').style.display = 'none';
-      }
-    });
-  </script>
+  document.getElementById("userName").textContent = data.name || "User";
+
+  const avatar = document.getElementById("userAvatar");
+
+  if (data.photoURL) {
+    avatar.style.backgroundImage = `url(${data.photoURL})`;
+    avatar.style.backgroundSize = "cover";
+  } else {
+    avatar.innerHTML = defaultAvatar;
+  }
+
+  if (data.role === "patient") {
+    document.getElementById("patientDashboard").style.display = "block";
+  } else {
+    document.getElementById("doctorDashboard").style.display = "block";
+  }
+});
+
+/* LOGOUT */
+document.getElementById("logoutBtn").addEventListener("click", ()=> {
+  signOut(auth);
+  window.location = "login.html";
+});
+</script>
+
 </body>
 </html>
