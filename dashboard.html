@@ -49,9 +49,7 @@
     object-fit:cover;
     background:#ffffff22;
     display:flex;align-items:center;justify-content:center;
-    font-size:26px;
-    font-weight:700;
-    color:white;
+    font-size:26px;font-weight:700;color:white;
   }
 
   .username{font-size:22px;font-weight:800}
@@ -96,15 +94,12 @@
   .feature-box i{font-size:30px;color:#1565c0;}
 
   .feature-title{
-    margin-top:10px;
-    font-size:18px;
-    font-weight:700;
-    color:#0d47a1;
+    margin-top:10px;font-size:18px;font-weight:700;color:#0d47a1;
   }
 
   .feature-desc{font-size:13px;color:#45617a;margin-top:4px;}
 
-  /* AI Assistant Styles */
+  /* AI Assistant */
   .ai-box{
     margin-top:22px;
     background:#f6fbff;
@@ -115,113 +110,101 @@
   }
 
   .btn-primary{
-    background:#1565c0;
-    color:white;
-    border:none;
-    padding:10px 16px;
-    border-radius:10px;
-    cursor:pointer;
-    font-weight:700;
+    background:#1565c0;color:white;border:none;padding:10px 16px;border-radius:10px;cursor:pointer;font-weight:700;
   }
 
   .btn-ghost{
-    background:#eaf2ff;
-    color:#0d47a1;
-    padding:10px 16px;
-    border-radius:10px;
-    cursor:pointer;
-    border:none;
+    background:#eaf2ff;color:#0d47a1;padding:10px 16px;border-radius:10px;cursor:pointer;border:none;
   }
 
   textarea,input{
-    border-radius:8px;
-    border:1px solid #cfd9e6;
+    border-radius:8px;border:1px solid #cfd9e6;
   }
 </style>
 </head>
 
 <body>
 
-  <!-- HEADER -->
-  <div class="header">
-    <div class="user-area">
-      <div id="userAvatar" class="avatar"></div>
-      <div id="userName" class="username">Loading...</div>
-    </div>
-    <button class="logout-btn" id="logoutBtn">Logout</button>
+<!-- HEADER -->
+<div class="header">
+  <div class="user-area">
+    <div id="userAvatar" class="avatar"></div>
+    <div id="userName" class="username">Loading...</div>
   </div>
+  <button class="logout-btn" id="logoutBtn">Logout</button>
+</div>
 
-  <!-- PATIENT DASHBOARD -->
-  <div id="patientDashboard" class="card" style="display:none;">
-    <h2>Patient Dashboard</h2>
+<!-- PATIENT DASHBOARD -->
+<div id="patientDashboard" class="card" style="display:none;">
+  <h2>Patient Dashboard</h2>
+  <p>Use AI to diagnose symptoms, get cures, book doctors and manage your health.</p>
 
-    <p>Welcome! Use AI to find cures, book doctors, take guidance and manage your health.</p>
+  <!-- AI BOX -->
+  <div class="ai-box">
+    <h3><i class="fa-solid fa-stethoscope"></i> AI Symptom Assistant</h3>
 
-    <!-- 🔥 AI ASSISTANT BOX ADDED HERE -->
-    <div class="ai-box">
-      <h3><i class="fa-solid fa-stethoscope"></i> AI Symptom Assistant</h3>
-      <p class="small">Enter your symptoms. The assistant will ask follow-up questions and give medical + household cures.</p>
+    <div style="display:flex;gap:8px;margin-top:10px;">
+      <input id="symptomText" placeholder="Example: headache, nausea, chest pain" style="flex:1;padding:10px;">
+      <button id="startAiBtn" class="btn-primary">Start Diagnosis</button>
+    </div>
 
+    <!-- MATCH AREA -->
+    <div id="aiMatchArea" style="margin-top:16px;display:none;color:#0d47a1;font-weight:600;"></div>
+
+    <!-- QUESTIONS -->
+    <div id="aiQuestionArea" style="margin-top:16px;display:none;">
+      <div id="aiQuestionText" style="font-weight:700;color:#0d47a1;"></div>
+      <textarea id="aiAnswerInput" style="width:100%;min-height:60px;margin-top:6px;padding:10px;"></textarea>
       <div style="display:flex;gap:8px;margin-top:10px;">
-        <input id="symptomText" placeholder="Example: headache, cold, chest pain" style="flex:1;padding:10px;">
-        <button id="startAiBtn" class="btn-primary">Start Diagnosis</button>
+        <button id="aiNextBtn" class="btn-primary">Next</button>
+        <button id="aiCancelBtn" class="btn-ghost">Cancel</button>
       </div>
-
-      <div id="aiQuestionArea" style="margin-top:16px;display:none;">
-        <div id="aiQuestionText" style="font-weight:700;color:#0d47a1;"></div>
-        <textarea id="aiAnswerInput" placeholder="Type your answer..." style="width:100%;min-height:60px;margin-top:6px;padding:10px;"></textarea>
-
-        <div style="display:flex;gap:8px;margin-top:10px;">
-          <button id="aiNextBtn" class="btn-primary">Next</button>
-          <button id="aiCancelBtn" class="btn-ghost">Cancel</button>
-        </div>
-      </div>
-
-      <div id="aiResultArea" style="margin-top:16px;display:none;">
-        <h4>Result</h4>
-        <div id="aiResultContent" style="white-space:pre-wrap;background:white;padding:14px;border-radius:10px;border:1px solid #ddd;"></div>
-
-        <button id="saveAiBtn" class="btn-primary" style="margin-top:12px;">Save to My Records</button>
-      </div>
-
-      <div id="aiStatus" style="margin-top:12px;font-family:monospace;color:#173b5a;display:none;"></div>
     </div>
 
-    <!-- Other patient features -->
-    <div class="grid">
-      <div class="feature-box">
-        <i class="fa-solid fa-user-doctor"></i>
-        <div class="feature-title">Find Doctors</div>
-        <div class="feature-desc">View specialists & book appointments instantly.</div>
-      </div>
-
-      <div class="feature-box">
-        <i class="fa-solid fa-video"></i>
-        <div class="feature-title">Video Consultation</div>
-        <div class="feature-desc">High-quality telemedicine video calls.</div>
-      </div>
-
-      <div class="feature-box">
-        <i class="fa-solid fa-notes-medical"></i>
-        <div class="feature-title">Your Health Records</div>
-        <div class="feature-desc">Manage health history & reports easily.</div>
-      </div>
+    <!-- RESULT -->
+    <div id="aiResultArea" style="margin-top:16px;display:none;">
+      <h4>Diagnosis Result</h4>
+      <div id="aiResultContent" style="background:white;padding:14px;border-radius:10px;border:1px solid #ccc;"></div>
+      <button id="saveAiBtn" class="btn-primary" style="margin-top:12px;">Save to My Records</button>
     </div>
   </div>
 
-  <!-- DOCTOR DASHBOARD -->
-  <div id="doctorDashboard" class="card" style="display:none;">
-    <h2>Doctor Dashboard</h2>
+  <!-- FEATURES GRID -->
+  <div class="grid">
+    <div class="feature-box">
+      <i class="fa-solid fa-user-doctor"></i>
+      <div class="feature-title">Find Doctors</div>
+      <div class="feature-desc">View specialists & book appointments instantly.</div>
+    </div>
 
-    <p>Manage appointments, set availability, and assist your patients using smart tools.</p>
+    <div class="feature-box">
+      <i class="fa-solid fa-video"></i>
+      <div class="feature-title">Video Consultation</div>
+      <div class="feature-desc">High-quality telemedicine video calls.</div>
+    </div>
 
+    <div class="feature-box">
+      <i class="fa-solid fa-notes-medical"></i>
+      <div class="feature-title">Your Health Records</div>
+      <div class="feature-desc">Manage health history & reports easily.</div>
+    </div>
   </div>
+</div>
 
-<!------------------ FIREBASE SCRIPT ------------------->
+<!-- DOCTOR DASHBOARD -->
+<div id="doctorDashboard" class="card" style="display:none;">
+  <h2>Doctor Dashboard</h2>
+  <p>Doctor tools will be available here.</p>
+</div>
+
+<!-- FIREBASE + LOCAL AI -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+import healthData from "./healthData.js";
+import LocalAI from "./localAI.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDav5CAOhVEUs7czI8zAO9Jogn-B30OLSU",
@@ -237,27 +220,21 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-/* DEFAULT AVATAR ICON */
-const defaultAvatar = `<i class="fa-solid fa-user"></i>`;
-
-/* LOAD USER DATA */
+/* LOAD USER */
 onAuthStateChanged(auth, async (user) => {
   if (!user) { window.location.href = "login.html"; return; }
 
   const snap = await getDoc(doc(db, "users", user.uid));
-  if (!snap.exists()) return;
-
   const data = snap.data();
 
-  document.getElementById("userName").textContent = data.name || "User";
-
-  const avatar = document.getElementById("userAvatar");
+  document.getElementById("userName").textContent = data.name;
+  let avatar = document.getElementById("userAvatar");
 
   if (data.photoURL) {
     avatar.style.backgroundImage = `url(${data.photoURL})`;
-    avatar.style.backgroundSize = "cover";
+    avatar.textContent = "";
   } else {
-    avatar.innerHTML = defaultAvatar;
+    avatar.innerHTML = `<i class="fa-solid fa-user"></i>`;
   }
 
   if (data.role === "patient") {
@@ -268,10 +245,128 @@ onAuthStateChanged(auth, async (user) => {
 });
 
 /* LOGOUT */
-document.getElementById("logoutBtn").addEventListener("click", ()=> {
+document.getElementById("logoutBtn").addEventListener("click", () => {
   signOut(auth);
-  window.location = "login.html";
+  window.location.href = "login.html";
 });
+
+/* ---------------- AI ENGINE LOGIC ---------------- */
+const symptomInput = document.getElementById("symptomText");
+const startBtn = document.getElementById("startAiBtn");
+const matchArea = document.getElementById("aiMatchArea");
+const qArea = document.getElementById("aiQuestionArea");
+const qText = document.getElementById("aiQuestionText");
+const ansInput = document.getElementById("aiAnswerInput");
+const nextBtn = document.getElementById("aiNextBtn");
+const cancelBtn = document.getElementById("aiCancelBtn");
+const resultArea = document.getElementById("aiResultArea");
+const resultContent = document.getElementById("aiResultContent");
+const saveBtn = document.getElementById("saveAiBtn");
+
+let matches = [];
+let chosenId = null;
+let questions = [];
+let answers = {};
+let qIndex = 0;
+let finalReport = null;
+
+/* START AI */
+startBtn.addEventListener("click", () => {
+  const text = symptomInput.value.trim();
+  if (!text) return alert("Please type symptoms first.");
+
+  matches = LocalAI.findMatches(text, 5);
+
+  matchArea.style.display = "block";
+  matchArea.innerHTML = "Top matches:<br>";
+
+  matches.forEach((m, i) => {
+    matchArea.innerHTML += `
+      <div style="margin-top:6px;">
+        <input type="radio" name="match" value="${m.id}" ${i === 0 ? "checked" : ""}>
+        <strong>${m.symptom}</strong>
+      </div>`;
+  });
+
+  matchArea.innerHTML += `<button id="chooseMatch" class="btn-primary" style="margin-top:10px;">Continue</button>`;
+
+  document.getElementById("chooseMatch").onclick = () => {
+    let sel = document.querySelector("input[name='match']:checked");
+    chosenId = sel.value;
+
+    questions = LocalAI.getClarifyingQuestions(chosenId);
+
+    matchArea.style.display = "none";
+    qArea.style.display = "block";
+    qIndex = 0;
+
+    qText.textContent = questions[qIndex];
+  };
+});
+
+/* NEXT QUESTION */
+nextBtn.addEventListener("click", () => {
+  let ans = ansInput.value.trim();
+  if (!ans) return alert("Please answer the question.");
+
+  answers[qIndex] = ans;
+  ansInput.value = "";
+  qIndex++;
+
+  if (qIndex < questions.length) {
+    qText.textContent = questions[qIndex];
+  } else {
+    qArea.style.display = "none";
+    showResult();
+  }
+});
+
+/* CANCEL QUESTIONS */
+cancelBtn.addEventListener("click", () => {
+  qArea.style.display = "none";
+});
+
+/* SHOW RESULT */
+function showResult() {
+  const analysis = LocalAI.analyze(chosenId, answers);
+  finalReport = LocalAI.generateReport(chosenId, answers, "");
+
+  resultArea.style.display = "block";
+
+  const s = analysis.structured;
+
+  resultContent.innerHTML = `
+    <strong>Match:</strong> ${analysis.matched.symptom}<br>
+    <strong>Urgency:</strong> ${s.urgency}<br>
+    <strong>Specialist:</strong> ${s.specialist}<br><br>
+
+    <strong>Household Remedies:</strong>
+    <ul>${s.household_care.map(i => `<li>${i}</li>`).join("")}</ul>
+
+    <strong>Possible Diagnoses:</strong>
+    <ul>${s.possible_diagnoses.map(i => `<li>${i}</li>`).join("")}</ul>
+
+    <strong>Prescription Suggestions:</strong>
+    <ul>${s.prescription_suggestions.map(i => `<li>${i}</li>`).join("")}</ul>
+
+    <br><strong>Explanation:</strong><br>${s.explain}
+  `;
+}
+
+/* SAVE RESULT */
+saveBtn.addEventListener("click", async () => {
+  try {
+    const user = auth.currentUser;
+    const ref = doc(collection(db, "users", user.uid, "aiResults"));
+    await setDoc(ref, { ...finalReport, savedAt: serverTimestamp() });
+    alert("Saved to your health records!");
+  } catch (e) {
+    alert("Save failed: " + e.message);
+  }
+});
+<script type="module" src="localAI.js"></script>
+<script type="module" src="healthData.js"></script>
+
 </script>
 
 </body>
