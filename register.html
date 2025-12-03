@@ -8,61 +8,31 @@
     body{font-family:Inter,system-ui,Arial;margin:0;background:#f6fbff;color:#102a43}
     .wrap{max-width:680px;margin:36px auto;padding:22px}
     .card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 8px 30px rgba(10,20,40,0.06)}
-    h1{margin:0 0 14px;font-size:20px;color:#0b4a78}
     label{display:block;margin-top:10px;font-size:13px;color:#344a5f}
-    input,select,textarea{width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid #d7e3f0}
+    input,select{width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid #d7e3f0}
     button{margin-top:14px;padding:10px 14px;border-radius:8px;border:none;background:#1565c0;color:#fff;font-weight:600;cursor:pointer}
     .muted{font-size:13px;color:#516a7a;margin-top:8px}
-    .small{font-size:13px;color:#0b4a78;text-decoration:underline;cursor:pointer}
-    .row{display:flex;gap:10px}
-    .col{flex:1}
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="card">
       <h1>Create your VAIDYA account</h1>
-      <p class="muted">Register as a <strong>Patient</strong> or <strong>Doctor</strong>. Doctors should later be verified by admin.</p>
+      <p class="muted">Register as a Patient or Doctor</p>
 
       <form id="registerForm">
-        <label>Full name</label>
-        <input id="name" required />
-
-        <div class="row">
-          <div class="col">
-            <label>Age</label>
-            <input id="age" type="number" min="0" />
-          </div>
-          <div class="col">
-            <label>Phone</label>
-            <input id="phone" type="tel" />
-          </div>
-        </div>
-
-        <label>Email</label>
-        <input id="email" type="email" required />
-
-        <label>Password</label>
-        <input id="password" type="password" required />
-
+        <label>Full name</label><input id="name" required />
+        <label>Age</label><input id="age" type="number" min="0" />
+        <label>Phone</label><input id="phone" type="tel" />
+        <label>Email</label><input id="email" type="email" required />
+        <label>Password</label><input id="password" type="password" required />
         <label>Role</label>
-        <select id="role">
-          <option value="patient">Patient</option>
-          <option value="doctor">Doctor</option>
-        </select>
-
-        <label>Health status (optional)</label>
-        <input id="healthStatus" />
-
-        <label>Allergies (optional)</label>
-        <input id="allergies" />
-
-        <label>Profile photo (optional)</label>
-        <input id="photoInput" type="file" accept="image/*" />
-
+        <select id="role"><option value="patient">Patient</option><option value="doctor">Doctor</option></select>
+        <label>Health status (optional)</label><input id="healthStatus" />
+        <label>Allergies (optional)</label><input id="allergies" />
+        <label>Profile photo (optional)</label><input id="photoInput" type="file" accept="image/*" />
         <button id="registerBtn" type="submit">Register & Sign in</button>
-
-        <div class="muted">Already have an account? <span class="small" id="toLogin">Login</span></div>
+        <div class="muted">Already have account? <a href="login.html">Login</a></div>
       </form>
     </div>
   </div>
@@ -74,7 +44,7 @@
     import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
     import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-storage.js";
 
-    // ---------- USE THIS CONFIG ----------
+    // <- YOUR FIREBASE CONFIG (already provided by you)
     const firebaseConfig = {
       apiKey: "AIzaSyDav5CAOhVEUs7czI8zAO9Jogn-B30OLSU",
       authDomain: "vaidya-244c9.firebaseapp.com",
@@ -84,71 +54,107 @@
       appId: "1:541936193390:web:bd9bcb63230501126bbb7f",
       measurementId: "G-127KRB6XQZ"
     };
-    // -------------------------------------
 
+    // Init
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
     const storage = getStorage(app);
 
+    // Helpers
     const $ = id => document.getElementById(id);
-    $('toLogin').addEventListener('click', ()=> location.href = 'login.html');
 
+    // Debug helper
+    function log(...args){ console.log('[register]', ...args); }
+
+    // Form submit
     $('registerForm').addEventListener('submit', async (ev) => {
       ev.preventDefault();
-      const name = $('name').value.trim();
-      const age = $('age').value.trim();
-      const phone = $('phone').value.trim();
-      const email = $('email').value.trim();
-      const password = $('password').value;
-      const role = $('role').value;
-      const healthStatus = $('healthStatus').value.trim();
-      const allergies = $('allergies').value.trim();
-
-      if (!email || !password || !name) return alert('Name, email and password are required.');
-
       try {
-        // create auth user
+        log('Submit clicked - collecting form values');
+        const name = $('name').value.trim();
+        const age = $('age').value.trim();
+        const phone = $('phone').value.trim();
+        const email = $('email').value.trim();
+        const password = $('password').value;
+        const role = $('role').value;
+        const healthStatus = $('healthStatus').value.trim();
+        const allergies = $('allergies').value.trim();
+
+        if (!name || !email || !password) {
+          alert('Please fill name, email and password.');
+          return;
+        }
+
+        // Disable the button to avoid double submits
+        $('registerBtn').disabled = true;
+        $('registerBtn').textContent = 'Registering...';
+
+        log('Calling createUserWithEmailAndPassword', email);
         const cred = await createUserWithEmailAndPassword(auth, email, password);
+        log('User created', cred.user.uid);
 
-        // set displayName
-        await updateProfile(cred.user, { displayName: name });
+        // update displayName immediately (if available)
+        try {
+          await updateProfile(cred.user, { displayName: name });
+          log('Profile displayName updated');
+        } catch (upErr) {
+          console.warn('updateProfile failed', upErr);
+        }
 
-        // optional photo upload
+        // upload optional photo
         let photoURL = '';
         const fileInput = $('photoInput');
         if (fileInput?.files && fileInput.files[0]) {
-          const file = fileInput.files[0];
-          const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
-          const path = `profiles/${cred.user.uid}/avatar_${Date.now()}.${ext}`;
-          const storageRef = ref(storage, path);
-          await uploadBytes(storageRef, file);
-          photoURL = await getDownloadURL(storageRef);
-          // update user profile with photo
-          await updateProfile(cred.user, { photoURL });
+          try {
+            const file = fileInput.files[0];
+            const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+            const path = `profiles/${cred.user.uid}/avatar_${Date.now()}.${ext}`;
+            const storageRef = ref(storage, path);
+            log('Uploading photo to', path);
+            await uploadBytes(storageRef, file);
+            photoURL = await getDownloadURL(storageRef);
+            log('Photo uploaded, URL:', photoURL);
+
+            // update user profile again with photo (best-effort)
+            try {
+              await updateProfile(cred.user, { photoURL });
+              log('User photoURL updated on auth user');
+            } catch (e){ console.warn('update profile photo failed', e); }
+          } catch (fileErr) {
+            console.warn('Photo upload failed', fileErr);
+          }
         }
 
-        // save user document in Firestore
-await setDoc(doc(db, 'users', cred.user.uid), {
-  name,
-  age: age ? Number(age) : null,
-  phone,
-  email,
-  role,
-  healthStatus,
-  allergies,
-  photoURL: photoURL || '',
-  verified: role === 'doctor' ? false : true,
-  createdAt: serverTimestamp()
-});
+        // Save user doc to Firestore
+        const userDoc = {
+          name,
+          age: age ? Number(age) : null,
+          phone,
+          email,
+          role,
+          healthStatus,
+          allergies,
+          photoURL: photoURL || '',
+          verified: role === 'doctor' ? false : true,
+          createdAt: serverTimestamp()
+        };
 
-// redirect to login after successful registration
-alert("Registration successful! Please log in.");
-location.href = "login.html";
+        log('Saving user doc to Firestore', userDoc);
+        await setDoc(doc(db, 'users', cred.user.uid), userDoc);
+        log('User document saved');
+
+        // Inform user and go to login (use replace to avoid back button returning to form)
+        alert('Registration successful! You will now be redirected to the login page.');
+        // Use replace so browser history doesn't keep the registration form
+        window.location.replace('login.html');
 
       } catch (err) {
-        console.error('Registration error', err);
-        alert('Register error: ' + (err?.message || err));
+        console.error('[register] error', err);
+        alert('Registration failed: ' + (err?.message || err));
+        // re-enable
+        $('registerBtn').disabled = false;
+        $('registerBtn').textContent = 'Register & Sign in';
       }
     });
   </script>
