@@ -129,21 +129,23 @@
         }
 
         // save user document in Firestore
-        await setDoc(doc(db, 'users', cred.user.uid), {
-          name,
-          age: age ? Number(age) : null,
-          phone,
-          email,
-          role,
-          healthStatus,
-          allergies,
-          photoURL: photoURL || '',
-          verified: role === 'doctor' ? false : true,
-          createdAt: serverTimestamp()
-        });
+await setDoc(doc(db, 'users', cred.user.uid), {
+  name,
+  age: age ? Number(age) : null,
+  phone,
+  email,
+  role,
+  healthStatus,
+  allergies,
+  photoURL: photoURL || '',
+  verified: role === 'doctor' ? false : true,
+  createdAt: serverTimestamp()
+});
 
-        // redirect to dashboard
-        location.href = 'dashboard.html';
+// redirect to login after successful registration
+alert("Registration successful! Please log in.");
+location.href = "login.html";
+
       } catch (err) {
         console.error('Registration error', err);
         alert('Register error: ' + (err?.message || err));
