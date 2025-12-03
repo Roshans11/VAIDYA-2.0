@@ -4,38 +4,169 @@
   <meta charset="utf-8" />
   <title>VAIDYA — Login</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
   <style>
-    body{font-family:Inter,system-ui,Arial;margin:0;background:#f6fbff;color:#102a43}
-    .wrap{max-width:500px;margin:36px auto;padding:22px}
-    .card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 8px 30px rgba(10,20,40,0.06)}
-    h1{margin:0 0 12px;font-size:20px;color:#0b4a78}
-    label{display:block;margin-top:8px;font-size:13px;color:#344a5f}
-    input{width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid #d7e3f0}
-    button{margin-top:14px;padding:10px 14px;border-radius:8px;border:none;background:#1565c0;color:#fff;font-weight:600;cursor:pointer}
-    .muted{font-size:13px;color:#516a7a;margin-top:8px}
-    .small{font-size:13px;color:#0b4a78;text-decoration:underline;cursor:pointer}
+    /* FONT + BACKGROUND */
+    body {
+      font-family: "Inter", system-ui, Arial;
+      margin: 0;
+      background: linear-gradient(135deg, #0d47a1, #1565c0, #42a5f5);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #102a43;
+    }
+
+    /* GLASS CARD */
+    .card {
+      width: 380px;
+      background: rgba(255, 255, 255, 0.18);
+      padding: 32px 28px;
+      border-radius: 18px;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+      text-align: center;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.25);
+    }
+
+    /* TITLE */
+    h1 {
+      margin: 0 0 18px;
+      font-size: 26px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    /* LABELS */
+    label {
+      display: block;
+      text-align: left;
+      margin-top: 12px;
+      font-size: 14px;
+      color: #eef5ff;
+      font-weight: 500;
+    }
+
+    /* INPUTS */
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-top: 6px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.35);
+      background: rgba(255,255,255,0.25);
+      color: #fff;
+      font-size: 15px;
+      outline: none;
+      transition: 0.25s;
+    }
+
+    input::placeholder {
+      color: #e2e6f0;
+    }
+
+    input:focus {
+      border-color: #fff;
+      box-shadow: 0 0 8px rgba(255,255,255,0.6);
+    }
+
+    /* BUTTON */
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 18px;
+      border-radius: 10px;
+      border: none;
+      background: #ffffff;
+      color: #0d47a1;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.25s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px rgba(255,255,255,0.35);
+    }
+
+    /* LINKS */
+    .muted {
+      margin-top: 14px;
+      font-size: 13px;
+      color: #e8efff;
+    }
+
+    .link {
+      color: #fff;
+      cursor: pointer;
+      font-weight: 600;
+      text-decoration: underline;
+    }
+
+    .smallLink {
+      font-size: 13px;
+      margin-top: 8px;
+      color: #cfdcff;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    /* ICONS IN INPUT */
+    .input-group {
+      position: relative;
+    }
+
+    .input-group i {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #e0ebff;
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="card">
-      <h1>Sign in to VAIDYA</h1>
-      <form id="loginForm">
-        <label>Email</label>
-        <input id="email" type="email" required />
-        <label>Password</label>
-        <input id="password" type="password" required />
-        <button type="submit">Login</button>
-        <div class="muted">New user? <span class="small" id="toRegister">Register</span></div>
-        <div style="margin-top:10px;color:#666;font-size:13px">Forgot password? <span id="forgot" class="small">Reset</span></div>
-      </form>
-    </div>
+
+  <div class="card">
+    <h1>Welcome to VAIDYA</h1>
+    <p style="margin-top:-8px;font-size:14px;color:#e5ebff;">Smart Healthcare Login Portal</p>
+
+    <form id="loginForm">
+
+      <label>Email</label>
+      <div class="input-group">
+        <input id="email" type="email" placeholder="Enter your email" required />
+        <i class="fa-solid fa-envelope"></i>
+      </div>
+
+      <label>Password</label>
+      <div class="input-group">
+        <input id="password" type="password" placeholder="Enter your password" required />
+        <i class="fa-solid fa-lock"></i>
+      </div>
+
+      <button type="submit">Login</button>
+
+      <div class="muted">
+        New user? <span class="link" id="toRegister">Create an account</span>
+      </div>
+
+      <div class="smallLink" id="forgot">Forgot password?</div>
+
+    </form>
   </div>
 
+  <!-- FIREBASE SCRIPT -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-    import { getFirestore } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDav5CAOhVEUs7czI8zAO9Jogn-B30OLSU",
@@ -49,37 +180,40 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const db = getFirestore(app);
 
     const $ = id => document.getElementById(id);
-    $('toRegister').addEventListener('click', ()=> location.href = 'register.html');
 
-    $('forgot').addEventListener('click', async () => {
-      const email = prompt('Enter your account email for password reset:');
+    // Go to Register Page
+    $('toRegister').onclick = () => location.href = 'register.html';
+
+    // Password Reset
+    $('forgot').onclick = async () => {
+      const email = prompt("Enter your email to reset password:");
       if (!email) return;
       try {
         await sendPasswordResetEmail(auth, email);
-        alert('Password reset email sent (check your inbox).');
+        alert("Reset email sent. Check your inbox.");
       } catch (err) {
-        console.error('Reset error', err); alert('Reset error: ' + (err?.message || err));
+        alert("Error: " + err.message);
       }
-    });
+    };
 
+    // Login Logic
     $('loginForm').addEventListener('submit', async (ev) => {
       ev.preventDefault();
       const email = $('email').value.trim();
       const password = $('password').value;
-      if (!email || !password) return alert('Email & password required.');
+
+      if (!email || !password) return alert('Please enter login details');
 
       try {
         await signInWithEmailAndPassword(auth, email, password);
-        // redirect to dashboard; onAuthStateChanged in dashboard will show profile
-        location.href = 'dashboard.html';
+        location.href = "dashboard.html"; // Redirect after login
       } catch (err) {
-        console.error('Login error', err);
-        alert('Login failed: ' + (err?.message || err));
+        alert("Login failed: " + err.message);
       }
     });
   </script>
+
 </body>
 </html>
