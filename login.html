@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>VAIDYA — Login</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body{font-family:Inter,system-ui,Arial;margin:0;background:#f6fbff;color:#102a43}
+    .wrap{max-width:500px;margin:36px auto;padding:22px}
+    .card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 8px 30px rgba(10,20,40,0.06)}
+    h1{margin:0 0 12px;font-size:20px;color:#0b4a78}
+    label{display:block;margin-top:8px;font-size:13px;color:#344a5f}
+    input{width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid #d7e3f0}
+    button{margin-top:14px;padding:10px 14px;border-radius:8px;border:none;background:#1565c0;color:#fff;font-weight:600;cursor:pointer}
+    .muted{font-size:13px;color:#516a7a;margin-top:8px}
+    .small{font-size:13px;color:#0b4a78;text-decoration:underline;cursor:pointer}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Sign in to VAIDYA</h1>
+      <form id="loginForm">
+        <label>Email</label>
+        <input id="email" type="email" required />
+        <label>Password</label>
+        <input id="password" type="password" required />
+        <button type="submit">Login</button>
+        <div class="muted">New user? <span class="small" id="toRegister">Register</span></div>
+        <div style="margin-top:10px;color:#666;font-size:13px">Forgot password? <span id="forgot" class="small">Reset</span></div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+    import { getFirestore } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDav5CAOhVEUs7czI8zAO9Jogn-B30OLSU",
+      authDomain: "vaidya-244c9.firebaseapp.com",
+      projectId: "vaidya-244c9",
+      storageBucket: "vaidya-244c9.firebasestorage.app",
+      messagingSenderId: "541936193390",
+      appId: "1:541936193390:web:bd9bcb63230501126bbb7f",
+      measurementId: "G-127KRB6XQZ"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const $ = id => document.getElementById(id);
+    $('toRegister').addEventListener('click', ()=> location.href = 'register.html');
+
+    $('forgot').addEventListener('click', async () => {
+      const email = prompt('Enter your account email for password reset:');
+      if (!email) return;
+      try {
+        await sendPasswordResetEmail(auth, email);
+        alert('Password reset email sent (check your inbox).');
+      } catch (err) {
+        console.error('Reset error', err); alert('Reset error: ' + (err?.message || err));
+      }
+    });
+
+    $('loginForm').addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const email = $('email').value.trim();
+      const password = $('password').value;
+      if (!email || !password) return alert('Email & password required.');
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        // redirect to dashboard; onAuthStateChanged in dashboard will show profile
+        location.href = 'dashboard.html';
+      } catch (err) {
+        console.error('Login error', err);
+        alert('Login failed: ' + (err?.message || err));
+      }
+    });
+  </script>
+</body>
+</html>

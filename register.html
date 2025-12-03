@@ -1,0 +1,154 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>VAIDYA — Register</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body{font-family:Inter,system-ui,Arial;margin:0;background:#f6fbff;color:#102a43}
+    .wrap{max-width:680px;margin:36px auto;padding:22px}
+    .card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 8px 30px rgba(10,20,40,0.06)}
+    h1{margin:0 0 14px;font-size:20px;color:#0b4a78}
+    label{display:block;margin-top:10px;font-size:13px;color:#344a5f}
+    input,select,textarea{width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid #d7e3f0}
+    button{margin-top:14px;padding:10px 14px;border-radius:8px;border:none;background:#1565c0;color:#fff;font-weight:600;cursor:pointer}
+    .muted{font-size:13px;color:#516a7a;margin-top:8px}
+    .small{font-size:13px;color:#0b4a78;text-decoration:underline;cursor:pointer}
+    .row{display:flex;gap:10px}
+    .col{flex:1}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Create your VAIDYA account</h1>
+      <p class="muted">Register as a <strong>Patient</strong> or <strong>Doctor</strong>. Doctors should later be verified by admin.</p>
+
+      <form id="registerForm">
+        <label>Full name</label>
+        <input id="name" required />
+
+        <div class="row">
+          <div class="col">
+            <label>Age</label>
+            <input id="age" type="number" min="0" />
+          </div>
+          <div class="col">
+            <label>Phone</label>
+            <input id="phone" type="tel" />
+          </div>
+        </div>
+
+        <label>Email</label>
+        <input id="email" type="email" required />
+
+        <label>Password</label>
+        <input id="password" type="password" required />
+
+        <label>Role</label>
+        <select id="role">
+          <option value="patient">Patient</option>
+          <option value="doctor">Doctor</option>
+        </select>
+
+        <label>Health status (optional)</label>
+        <input id="healthStatus" />
+
+        <label>Allergies (optional)</label>
+        <input id="allergies" />
+
+        <label>Profile photo (optional)</label>
+        <input id="photoInput" type="file" accept="image/*" />
+
+        <button id="registerBtn" type="submit">Register & Sign in</button>
+
+        <div class="muted">Already have an account? <span class="small" id="toLogin">Login</span></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modular Firebase v12.6 -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-storage.js";
+
+    // ---------- USE THIS CONFIG ----------
+    const firebaseConfig = {
+      apiKey: "AIzaSyDav5CAOhVEUs7czI8zAO9Jogn-B30OLSU",
+      authDomain: "vaidya-244c9.firebaseapp.com",
+      projectId: "vaidya-244c9",
+      storageBucket: "vaidya-244c9.firebasestorage.app",
+      messagingSenderId: "541936193390",
+      appId: "1:541936193390:web:bd9bcb63230501126bbb7f",
+      measurementId: "G-127KRB6XQZ"
+    };
+    // -------------------------------------
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    const $ = id => document.getElementById(id);
+    $('toLogin').addEventListener('click', ()=> location.href = 'login.html');
+
+    $('registerForm').addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const name = $('name').value.trim();
+      const age = $('age').value.trim();
+      const phone = $('phone').value.trim();
+      const email = $('email').value.trim();
+      const password = $('password').value;
+      const role = $('role').value;
+      const healthStatus = $('healthStatus').value.trim();
+      const allergies = $('allergies').value.trim();
+
+      if (!email || !password || !name) return alert('Name, email and password are required.');
+
+      try {
+        // create auth user
+        const cred = await createUserWithEmailAndPassword(auth, email, password);
+
+        // set displayName
+        await updateProfile(cred.user, { displayName: name });
+
+        // optional photo upload
+        let photoURL = '';
+        const fileInput = $('photoInput');
+        if (fileInput?.files && fileInput.files[0]) {
+          const file = fileInput.files[0];
+          const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+          const path = `profiles/${cred.user.uid}/avatar_${Date.now()}.${ext}`;
+          const storageRef = ref(storage, path);
+          await uploadBytes(storageRef, file);
+          photoURL = await getDownloadURL(storageRef);
+          // update user profile with photo
+          await updateProfile(cred.user, { photoURL });
+        }
+
+        // save user document in Firestore
+        await setDoc(doc(db, 'users', cred.user.uid), {
+          name,
+          age: age ? Number(age) : null,
+          phone,
+          email,
+          role,
+          healthStatus,
+          allergies,
+          photoURL: photoURL || '',
+          verified: role === 'doctor' ? false : true,
+          createdAt: serverTimestamp()
+        });
+
+        // redirect to dashboard
+        location.href = 'dashboard.html';
+      } catch (err) {
+        console.error('Registration error', err);
+        alert('Register error: ' + (err?.message || err));
+      }
+    });
+  </script>
+</body>
+</html>

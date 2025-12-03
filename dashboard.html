@@ -1,0 +1,131 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>VAIDYA — Dashboard</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body{font-family:Inter,system-ui,Arial;margin:0;background:linear-gradient(180deg,#f7fbff,#ffffff);color:#102a43}
+    header{background:linear-gradient(90deg,#1565c0,#0d47a1);padding:14px;color:#fff;display:flex;align-items:center;justify-content:space-between}
+    .wrap{max-width:1100px;margin:22px auto;padding:18px}
+    .card{background:#fff;padding:18px;border-radius:12px;box-shadow:0 10px 30px rgba(10,20,40,0.06)}
+    .profile{display:flex;gap:14px;align-items:center}
+    .avatar{width:72px;height:72px;border-radius:12px;object-fit:cover;border:2px solid rgba(0,0,0,0.06)}
+    .btn{padding:8px 12px;border-radius:8px;border:none;background:#fff;color:#0d47a1;font-weight:700;cursor:pointer}
+    .link{color:#1565c0;cursor:pointer;text-decoration:underline}
+  </style>
+</head>
+<body>
+  <header>
+    <div style="display:flex;align-items:center;gap:12px">
+      <strong style="font-size:18px">VAIDYA</strong>
+    </div>
+    <div id="hdrRight"></div>
+  </header>
+
+  <div class="wrap">
+    <div id="profileCard" class="card" style="display:none">
+      <div class="profile">
+        <img id="avatar" class="avatar" src="" alt="avatar"/>
+        <div>
+          <div id="name" style="font-weight:700;font-size:18px">User</div>
+          <div id="role" style="color:#566b7a;font-size:14px">Role</div>
+          <div id="contact" style="margin-top:8px;color:#2b3b46;font-size:14px"></div>
+        </div>
+      </div>
+      <div style="margin-top:12px" id="extra"></div>
+    </div>
+
+    <div id="patientArea" class="card" style="display:none;margin-top:18px">
+      <h3>Patient Actions</h3>
+      <p>Search symptoms, book appointments, view prescriptions — (placeholders).</p>
+      <div style="margin-top:10px"> <a class="link" href="javascript:location.reload()">Refresh profile</a></div>
+    </div>
+
+    <div id="doctorArea" class="card" style="display:none;margin-top:18px">
+      <h3>Doctor Actions</h3>
+      <p>Manage slots, view bookings, consult patients (placeholders).</p>
+      <div style="margin-top:10px"> <a class="link" href="javascript:location.reload()">Refresh profile</a></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+    // storage not strictly needed here, but imported if you want to use it
+    import { getStorage } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-storage.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDav5CAOhVEUs7czI8zAO9Jogn-B30OLSU",
+      authDomain: "vaidya-244c9.firebaseapp.com",
+      projectId: "vaidya-244c9",
+      storageBucket: "vaidya-244c9.firebasestorage.app",
+      messagingSenderId: "541936193390",
+      appId: "1:541936193390:web:bd9bcb63230501126bbb7f",
+      measurementId: "G-127KRB6XQZ"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    const $ = id => document.getElementById(id);
+    const hdrRight = $('hdrRight');
+
+    function renderHeader(name, avatar) {
+      hdrRight.innerHTML = `
+        <div style="display:flex;align-items:center;gap:10px">
+          <img src="${avatar || ''}" alt="a" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.12)" />
+          <div style="color:white;font-weight:600">${name || ''}</div>
+          <button id="logoutBtn" class="btn">Logout</button>
+        </div>
+      `;
+      const lb = document.getElementById('logoutBtn');
+      if (lb) lb.addEventListener('click', async () => { await signOut(auth); location.href = 'login.html'; });
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        // not logged in
+        location.href = 'login.html';
+        return;
+      }
+
+      // load user doc
+      let profile = null;
+      try {
+        const snap = await getDoc(doc(db, 'users', user.uid));
+        if (snap.exists()) profile = snap.data();
+      } catch (e) { console.warn('load user doc', e); }
+
+      const name = (profile && profile.name) || user.displayName || (user.email ? user.email.split('@')[0] : 'User');
+      const role = (profile && profile.role) || 'patient';
+      const photo = (profile && profile.photoURL) || user.photoURL || '';
+
+      renderHeader(name, photo);
+
+      // fill profile card
+      $('avatar').src = photo || `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='72' height='72'><rect width='100%' height='100%' fill='%231565c0'></rect><text x='50%' y='55%' font-size='32' fill='white' text-anchor='middle'>${encodeURIComponent(name.charAt(0).toUpperCase())}</text></svg>`;
+      $('name').innerText = name;
+      $('role').innerText = role.charAt(0).toUpperCase() + role.slice(1);
+      $('contact').innerText = profile?.phone ? 'Phone: ' + profile.phone : '';
+
+      $('profileCard').style.display = '';
+      if (role === 'patient') {
+        $('patientArea').style.display = '';
+        $('doctorArea').style.display = 'none';
+        $('extra').innerHTML = `<div style="margin-top:10px;color:#3b4b5a">Health: ${profile?.healthStatus || '—'} • Allergies: ${profile?.allergies || '—'}</div>`;
+      } else if (role === 'doctor') {
+        $('doctorArea').style.display = '';
+        $('patientArea').style.display = 'none';
+        $('extra').innerHTML = `<div style="margin-top:10px;color:#3b4b5a">Doctor profile — Verified: ${profile?.verified ? 'Yes' : 'No'}</div>`;
+      } else {
+        $('patientArea').style.display = '';
+        $('doctorArea').style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
