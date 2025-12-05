@@ -18,16 +18,17 @@
 
   <style>
     :root{
-      /* Cerulean-metallic theme (updated) */
-      --gradient: linear-gradient(135deg, #2A9FDE 0%, #007EBD 50%, #005C8F 100%);
-      --cerulean-500: #2A9FDE;
-      --cerulean-600: #007EBD;
-      --cerulean-800: #005C8F;
+      /* Professional palette: deep navy, slate neutrals, subtle teal accent */
+      --gradient: linear-gradient(135deg, #0d47a1 0%, #0b3a85 60%, #08366e 100%);
+      --primary-500: #0d47a1; /* primary */
+      --primary-600: #0b3a85; /* button bg */
+      --primary-800: #042b53; /* strong text / headings */
+      --accent: #00796b; /* subtle accent for small highlights */
 
-      --bg: #f6fbff;
-      --card: #ffffff;
-      --muted: #5c6b75;
-      --glass: rgba(255,255,255,0.7);
+      --bg: #f4f6f8;   /* overall page wash */
+      --card: #ffffff; /* card bg */
+      --muted: #6b7280; /* muted text */
+      --glass: rgba(255,255,255,0.85);
       --radius: 12px;
       --maxw: 1200px;
     }
@@ -37,22 +38,21 @@
     body{
       font-family:Inter,system-ui,Arial,Helvetica,sans-serif;
       margin:0;
-      background: var(--gradient);
-      /* subtle top-to-bottom wash */
-      background-image: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)), var(--gradient);
+      /* gentle neutral background with subtle top light */
+      background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.35)), var(--bg);
       color:#0f1724;
       line-height:1.45;
       -webkit-font-smoothing:antialiased;
       -moz-osx-font-smoothing:grayscale;
     }
 
-    a{color:var(--cerulean-500);text-decoration:none}
+    a{color:var(--primary-500);text-decoration:none}
     header{
-      /* use the cerulean gradient for header */
-      background: var(--gradient);
+      /* refined solid navy header */
+      background: var(--primary-600);
       color:white;
       padding:18px 20px;
-      box-shadow:0 8px 30px rgba(0,0,0,0.12);
+      box-shadow:0 6px 20px rgba(3,18,38,0.12);
     }
 
     .wrap{max-width:var(--maxw);margin:0 auto;padding:28px}
@@ -61,76 +61,80 @@
     .brand{display:flex;align-items:center;gap:12px;font-weight:800;font-size:18px}
     .brand-logo{
       width:46px;height:46px;border-radius:10px;
-      background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(0,0,0,0.06));
       display:flex;align-items:center;justify-content:center;font-weight:800;color:white;border:1px solid rgba(255,255,255,0.06);
+      background-image: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)), var(--primary-500);
+      box-shadow: 0 6px 18px rgba(4, 41, 89, 0.18);
     }
 
     nav{display:flex;gap:12px;align-items:center;margin-left:auto}
     nav a, nav button{
-      color:white;font-weight:600;padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.12);background:transparent;cursor:pointer;
+      color:white;font-weight:600;padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);background:transparent;cursor:pointer;
+      transition:background .18s, transform .08s;
     }
+    nav a:hover{background:rgba(255,255,255,0.06);transform:translateY(-1px)}
 
     header .top{display:flex;align-items:center;gap:18px;max-width:var(--maxw);margin:0 auto}
 
     /* HERO */
     .hero{display:grid;grid-template-columns:1fr 420px;gap:28px;align-items:center;padding:44px 0}
-    .hero h1{font-size:34px;margin:0 0 12px;color:white;text-shadow:0 2px 10px rgba(0,0,0,0.18)}
-    .hero p.lead{color:rgba(255,255,255,0.9);margin:0 0 18px}
+    .hero h1{font-size:34px;margin:0 0 12px;color:#ffffff;text-shadow:0 2px 10px rgba(0,0,0,0.18)}
+    .hero p.lead{color:rgba(255,255,255,0.92);margin:0 0 18px}
 
     .cta-row{display:flex;gap:12px;flex-wrap:wrap}
 
     /* Use Bootstrap's .btn but adapt visuals */
     .btn {
-      --bs-btn-bg: var(--cerulean-600);
+      --bs-btn-bg: var(--primary-600);
       --bs-btn-border-color: transparent;
       --bs-btn-color: #fff;
       padding:10px 14px;border-radius:10px;border:none;font-weight:700;cursor:pointer;
-      box-shadow:0 8px 20px rgba(0,0,0,0.12);
+      box-shadow:0 10px 30px rgba(6,24,55,0.12);
     }
     /* ghost variant */
     .btn.ghost{
-      background:white;color:var(--cerulean-600);border:1px solid rgba(255,255,255,0.08);
+      background:white;color:var(--primary-600);border:1px solid rgba(6,24,55,0.06);
       box-shadow:none;
     }
 
     .hero-card{
-      background:var(--card);border-radius:14px;padding:18px;box-shadow:0 14px 40px rgba(12,38,72,0.06);border:1px solid rgba(0,0,0,0.04)
+      background:var(--card);border-radius:14px;padding:18px;box-shadow:0 14px 40px rgba(9,30,59,0.04);border:1px solid rgba(2,6,23,0.04)
     }
 
     .feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:18px}
     .feature{
       background: linear-gradient(180deg,#ffffff,#fbfdff);
-      padding:14px;border-radius:12px;border:1px solid rgba(0,0,0,0.03)
+      padding:14px;border-radius:12px;border:1px solid rgba(2,6,23,0.03)
     }
-    .feature h4{margin:0 0 6px}
+    .feature h4{margin:0 0 6px;color:var(--primary-800)}
     .feature p{margin:0;color:var(--muted);font-size:13px}
 
     /* How it works */
     .how{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:28px}
-    .step{background:var(--card);padding:18px;border-radius:12px;box-shadow:0 8px 30px rgba(12,38,72,0.04);border:1px solid rgba(0,0,0,0.03)}
-    .step h5{margin:0 0 8px}
+    .step{background:var(--card);padding:18px;border-radius:12px;box-shadow:0 8px 30px rgba(9,30,59,0.04);border:1px solid rgba(2,6,23,0.03)}
+    .step h5{margin:0 0 8px;color:var(--primary-800)}
     .step p{margin:0;color:var(--muted);font-size:13px}
 
     /* creators & links */
     .cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:28px;align-items:start}
-    .person{display:flex;gap:12px;align-items:center;padding:14px;border-radius:12px;background:linear-gradient(180deg,#fff,#fbfdff);border:1px solid rgba(0,0,0,0.03)}
-    .avatar{width:72px;height:72px;border-radius:12px;object-fit:cover;background:linear-gradient(180deg,#eaf6ff,#d7efff);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--cerulean-600)}
+    .person{display:flex;gap:12px;align-items:center;padding:14px;border-radius:12px;background:linear-gradient(180deg,#fff,#fbfdff);border:1px solid rgba(2,6,23,0.03)}
+    .avatar{width:72px;height:72px;border-radius:12px;object-fit:cover;background:linear-gradient(180deg,#e9f2f6,#e2eef9);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--primary-600)}
     .meta{flex:1}
-    .meta h4{margin:0 0 6px}
+    .meta h4{margin:0 0 6px;color:var(--primary-800)}
     .meta p{margin:0;color:var(--muted);font-size:13px}
 
-    .links{display:flex;flex-direction:column;gap:8px;padding:14px;border-radius:12px;background:linear-gradient(180deg,#fff,#fbfdff);border:1px solid rgba(0,0,0,0.03)}
-    .links a{display:inline-block;padding:10px 12px;border-radius:8px;background:linear-gradient(180deg,#f4f9ff,#eef9ff);color:var(--cerulean-600);font-weight:700;border:1px solid rgba(21,101,192,0.06)}
+    .links{display:flex;flex-direction:column;gap:8px;padding:14px;border-radius:12px;background:linear-gradient(180deg,#fff,#fbfdff);border:1px solid rgba(2,6,23,0.03)}
+    .links a{display:inline-block;padding:10px 12px;border-radius:8px;background:linear-gradient(180deg,#f7fafc,#eef6f9);color:var(--primary-600);font-weight:700;border:1px solid rgba(6,24,55,0.04)}
 
     /* contact */
     .contact{display:grid;grid-template-columns:1fr 420px;gap:18px;margin-top:28px;align-items:start}
-    form.card{padding:18px;background:var(--card);border-radius:12px;border:1px solid rgba(0,0,0,0.03)}
+    form.card{padding:18px;background:var(--card);border-radius:12px;border:1px solid rgba(2,6,23,0.03)}
     label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px}
     input[type="text"],input[type="email"],textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #e6eefb;background:white}
     textarea{min-height:120px;resize:vertical}
 
-    .foot{margin-top:32px;padding:18px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06));border:1px solid rgba(0,0,0,0.03);display:flex;justify-content:space-between;gap:12px;align-items:center}
-    footer.wrap{padding:26px 20px;margin-top:30px;background:transparent;color:rgba(255,255,255,0.95)}
+    .foot{margin-top:32px;padding:18px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.85));border:1px solid rgba(2,6,23,0.03);display:flex;justify-content:space-between;gap:12px;align-items:center}
+    footer.wrap{padding:26px 20px;margin-top:30px;background:transparent;color:#0b2740}
 
     .small-muted{font-size:13px;color:var(--muted)}
 
@@ -149,13 +153,15 @@
     /* small UI niceties */
     .badge{
       display:inline-block;
-      background:linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
-      color:var(--cerulean-500);padding:6px 10px;border-radius:999px;font-weight:700;font-size:13px;border:1px solid rgba(255,255,255,0.06)
+      background:linear-gradient(135deg, rgba(0,0,0,0.03), rgba(255,255,255,0.02));
+      color:var(--card);padding:6px 10px;border-radius:999px;font-weight:700;font-size:13px;border:1px solid rgba(255,255,255,0.06);
+      background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(0,0,0,0.02));
+      color: #f1f6fb;
     }
-    .kpi{font-weight:800;color:var(--cerulean-800);font-size:22px}
-    .muted-2{color:#6b7780;font-size:13px}
+    .kpi{font-weight:800;color:var(--card);font-size:22px}
+    .muted-2{color:#9aa3ab;font-size:13px}
     .creator-links{display:flex;gap:8px;margin-top:8px}
-    .creator-links a{font-size:13px;padding:8px 10px;border-radius:8px;background:#fff;border:1px solid rgba(0,0,0,0.04);color:var(--cerulean-600)}
+    .creator-links a{font-size:13px;padding:8px 10px;border-radius:8px;background:#fff;border:1px solid rgba(2,6,23,0.04);color:var(--primary-600)}
   </style>
 </head>
 <body>
@@ -218,7 +224,7 @@
       </div>
 
       <aside class="hero-card" aria-label="Quick tour">
-        <h3 style="margin-top:0;color:var(--cerulean-800)">Quick tour</h3>
+        <h3 style="margin-top:0;color:var(--primary-800)">Quick tour</h3>
         <p style="color:var(--muted);margin-bottom:12px">Try in this order:</p>
         <ol style="padding-left:18px;margin:0 0 12px;color:var(--muted)">
           <li>Register as a patient → update profile & allergies</li>
@@ -235,7 +241,7 @@
 
     <!-- HOW IT WORKS -->
     <section aria-label="How it works">
-      <h2 style="margin-top:10px;color:var(--cerulean-800)">How VAIDYA works</h2>
+      <h2 style="margin-top:10px;color:var(--primary-800)">How VAIDYA works</h2>
       <div class="how">
         <div class="step">
           <h5>1. Register & profile</h5>
@@ -251,7 +257,7 @@
         </div>
       </div>
 
-      <h2 style="margin-top:22px;color:var(--cerulean-800)">Features in depth</h2>
+      <h2 style="margin-top:22px;color:var(--primary-800)">Features in depth</h2>
       <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:8px">
         <div style="flex:1;min-width:200px" class="step">
           <h5>Doctor cards & profiles</h5>
@@ -303,7 +309,7 @@
         </div>
 
         <aside style="width:320px">
-          <h3 style="color:var(--cerulean-800)">Important links</h3>
+          <h3 style="color:var(--primary-800)">Important links</h3>
           <div class="links" role="navigation" aria-label="Important links">
             <a href="register.html" title="Register">Register — create an account</a>
             <a href="login.html" title="Login">Login — access your dashboard</a>
@@ -317,7 +323,7 @@
 
     <!-- HELP & FAQ -->
     <section aria-label="Help" style="margin-top:20px">
-      <h3 style="color:var(--cerulean-800)">Help & FAQ</h3>
+      <h3 style="color:var(--primary-800)">Help & FAQ</h3>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px">
         <div class="step">
           <strong>Q: Is AI replacing doctors?</strong>
@@ -340,7 +346,7 @@
 
     <!-- CONTACT -->
     <section id="contact" aria-label="Contact us" style="margin-top:22px">
-      <h3 style="color:var(--cerulean-800)">Contact us</h3>
+      <h3 style="color:var(--primary-800)">Contact us</h3>
       <div class="contact">
         <form class="card" id="contactForm" onsubmit="return false" aria-label="Contact form">
           <label for="cname">Full name</label>
@@ -360,8 +366,8 @@
           <div style="margin-top:12px" class="small-muted">Or email us: <strong><a href="mailto:support@vaidya.example">support@vaidya.example</a></strong></div>
         </form>
 
-        <aside style="padding:18px;border-radius:12px;background:var(--card);border:1px solid rgba(0,0,0,0.03)">
-          <h4 style="color:var(--cerulean-800)">Office</h4>
+        <aside style="padding:18px;border-radius:12px;background:var(--card);border:1px solid rgba(2,6,23,0.03)">
+          <h4 style="color:var(--primary-800)">Office</h4>
           <p class="small-muted">VAIDYA — Demo office</p>
           <p class="small-muted">123 Healthcare St, City, Country</p>
           <p style="margin-top:8px"><strong>Phone:</strong> +91 99999 99999</p>
@@ -375,7 +381,7 @@
 
     <div class="foot">
       <div>
-        <div style="font-weight:800;color:white">VAIDYA</div>
+        <div style="font-weight:800;color:var(--primary-800)">VAIDYA</div>
         <div class="small-muted">AI-assisted triage • Doctor appointment booking • Nearby health map</div>
       </div>
       <div style="text-align:right">
@@ -387,7 +393,7 @@
 
   <footer class="wrap">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-      <div style="color:white"><strong>VAIDYA</strong> — Trusted digital healthcare</div>
+      <div style="color:var(--primary-800)"><strong>VAIDYA</strong> — Trusted digital healthcare</div>
       <div class="small-muted">Built with ❤️ · Designed for clinics & patients</div>
     </div>
   </footer>
