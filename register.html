@@ -5,144 +5,381 @@
   <title>VAIDYA — Register</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-  <!-- ✅ ALL YOUR ORIGINAL CSS — UNCHANGED -->
   <style>
-    /* (CSS exactly same as your file — not modified) */
+    :root{
+      --bg-1:#062743;
+      --bg-2:#0b5fb1;
+      --glass: rgba(255,255,255,0.12);
+      --muted: #dbe9ff;
+      --accent: #ffffff;
+      --btn: #ffffff;
+      --btn-text: #0b4a78;
+      --radius: 16px;
+      --card-w: 900px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-family:Inter,system-ui,Arial,Helvetica,sans-serif;
+      color:#042235;
+      background: radial-gradient(1200px 600px at 10% 10%, #0a3a6b33 0%, transparent 10%),
+                  linear-gradient(135deg, var(--bg-1), var(--bg-2));
+    }
+
+    .container{
+      width:95%;
+      max-width:var(--card-w);
+      padding:28px;
+      display:grid;
+      grid-template-columns: 460px 1fr;
+      gap:28px;
+      align-items:start;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+      border-radius: var(--radius);
+      padding: 26px;
+      box-shadow: 0 18px 60px rgba(2,12,34,0.45);
+      border: 1px solid rgba(255,255,255,0.06);
+      color:white;
+      backdrop-filter: blur(10px);
+    }
+
+    .left-hero {
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
+    .brand {
+      display:flex;align-items:center;gap:12px;
+    }
+    .logo {
+      width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,#fff2,#ffffff22);display:flex;align-items:center;justify-content:center;font-weight:800;color:#0b4a78;font-size:22px;border:1px solid rgba(255,255,255,0.06)
+    }
+    h1{margin:0;font-size:22px;color:#fff;font-weight:800}
+    p.lead{margin:0;color:rgba(255,255,255,0.85);font-size:14px}
+    .kpis{display:flex;gap:12px;margin-top:8px}
+    .kpi{background:rgba(255,255,255,0.03);padding:10px;border-radius:10px;flex:1;border:1px solid rgba(255,255,255,0.03)}
+    .kpi strong{display:block;font-size:18px}
+    .kpi small{color:var(--muted);display:block;margin-top:4px;font-size:13px}
+
+    /* Form styling */
+    form {
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      color:#0b2b44;
+    }
+
+    .form-card {
+      background: #fff;
+      border-radius:12px;
+      padding:18px;
+      box-shadow:0 8px 30px rgba(2,12,34,0.08);
+      border:1px solid rgba(2,12,34,0.04);
+      color:#0b2b44;
+    }
+
+    .row {display:flex;gap:10px}
+    .col{flex:1}
+
+    label{font-size:13px;font-weight:600;color:#1a3550;margin-bottom:6px;display:block}
+    .input {
+      width:100%;
+      padding:11px 12px;
+      border-radius:10px;
+      border:1px solid #e6eef6;
+      background:#fbfeff;
+      font-size:14px;
+      transition:0.18s;
+    }
+    .input:focus{box-shadow:0 6px 18px rgba(13,71,161,0.08);outline:none;border-color:#bcd9ff}
+
+    select.input {appearance:none;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="8" viewBox="0 0 14 8"><path fill="%236b7f97" d="M7 8L0 0h14z"/></svg>');background-repeat:no-repeat;background-position:right 12px center;background-size:14px 8px;padding-right:36px}
+
+    .file-row{display:flex;align-items:center;gap:12px}
+    .file-preview{width:72px;height:72px;border-radius:10px;background:#f0f7ff;border:1px solid #e1eefb;display:flex;align-items:center;justify-content:center;color:#2b4a6e;font-weight:700}
+    .choose-btn{padding:8px 12px;border-radius:10px;border:1px solid #e6eef6;background:#fff;cursor:pointer}
+
+    .actions{display:flex;gap:10px;margin-top:8px;align-items:center}
+    .btn-primary {
+      background: linear-gradient(180deg,#0d47a1,#1565c0);
+      color:white;padding:12px 16px;border-radius:12px;border:none;font-weight:800;cursor:pointer;box-shadow:0 12px 30px rgba(13,71,161,0.18)
+    }
+    .btn-ghost {background:transparent;border:1px solid rgba(13,71,161,0.12);padding:10px 14px;border-radius:10px;color:#fff;cursor:pointer}
+
+    .muted {font-size:13px;color:rgba(255,255,255,0.75)}
+
+    /* subtle helper text */
+    .hint{font-size:13px;color:#4d6b86;margin-top:6px}
+
+    /* status box (hidden by default) */
+    #statusBox{display:none;margin-top:12px;padding:12px;background:#f0f7ff;border-left:4px solid #1565c0;border-radius:8px;white-space:pre-wrap;font-family:monospace;font-size:13px;color:#0b3b61;max-height:180px;overflow:auto}
+    #statusBox.error{display:block;color:#b00020;background:#fff0f0;border-left-color:#b00020}
+
+    /* responsive */
+    @media (max-width:980px){
+      .container{grid-template-columns:1fr; padding:18px}
+    }
+
   </style>
 </head>
-
 <body>
-<main class="container" role="main" aria-labelledby="reg-heading">
+  <main class="container" role="main" aria-labelledby="reg-heading">
 
-<!-- ✅ ALL YOUR ORIGINAL HTML — UNCHANGED -->
+    <!-- LEFT: Brand & info -->
+    <section class="card left-hero" aria-hidden="false">
+      <div class="brand">
+        <div class="logo">V</div>
+        <div>
+          <div style="font-weight:800;color:#fff;font-size:18px">VAIDYA</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.9)">Accessible healthcare for everyone</div>
+        </div>
+      </div>
 
-</main>
+      <h1 id="reg-heading">Create your VAIDYA account</h1>
+      <p class="lead">Secure, private, and designed for patients and doctors. Add your health details for better personalised care.</p>
 
-<script type="module">
-/* ================= FIREBASE (UNCHANGED EXCEPT STORAGE REMOVED) ================= */
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, updateProfile }
-from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, serverTimestamp }
-from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+      <div class="kpis">
+        <div class="kpi">
+          <strong>AI-powered</strong>
+          <small>Symptom suggestions & triage</small>
+        </div>
+        <div class="kpi">
+          <strong>Telehealth</strong>
+          <small>Book appointments & video calls</small>
+        </div>
+      </div>
 
-/* ================= CLOUDINARY (NEW – REQUIRED) ================= */
-const CLOUDINARY_CLOUD_NAME = "dknrcluo8";
-const CLOUDINARY_UPLOAD_PRESET = "vadiya2";
+      <p class="hint">Tip: Use a valid email you can access — you'll be asked to log in after registration.</p>
 
-async function uploadToCloudinary(file){
-  const url = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+      <div style="margin-top:auto;font-size:13px;color:rgba(255,255,255,0.8)">
+        <strong>Secure • Private • Doctor-approved</strong>
+      </div>
+    </section>
 
-  const res = await fetch(url, { method:"POST", body: formData });
-  if(!res.ok) throw new Error("Cloudinary upload failed");
-  return (await res.json()).secure_url;
-}
+    <!-- RIGHT: Form -->
+    <section class="form-card" aria-label="Registration form">
+      <form id="registerForm" novalidate>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <div style="font-weight:800;font-size:18px">Sign up</div>
+          <div style="font-size:13px;color:#28527a">Already have an account? <a href="login.html" style="color:#0d47a1;font-weight:700;text-decoration:underline">Login</a></div>
+        </div>
 
-/* ================= FIREBASE CONFIG (UNCHANGED) ================= */
-const firebaseConfig = {
-  apiKey: "AIzaSyDav5CAOhVEUs7czI8zAO9Jogn-B30OLSU",
-  authDomain: "vaidya-244c9.firebaseapp.com",
-  projectId: "vaidya-244c9",
-  messagingSenderId: "541936193390",
-  appId: "1:541936193390:web:bd9bcb63230501126bbb7f"
-};
+        <div class="row">
+          <div class="col">
+            <label for="name">Full name</label>
+            <input id="name" class="input" placeholder="Your full name" required />
+          </div>
+          <div class="col">
+            <label for="age">Age</label>
+            <input id="age" type="number" class="input" placeholder="e.g. 28" min="0" />
+          </div>
+        </div>
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+        <label for="phone">Phone</label>
+        <input id="phone" class="input" placeholder="+91 98xxxxxxx" />
 
-/* ================= HELPERS (UNCHANGED) ================= */
-const $ = id => document.getElementById(id);
-const statusBox = $('statusBox');
+        <label for="email">Email</label>
+        <input id="email" type="email" class="input" placeholder="you@example.com" required />
 
-function status(msg, level='info'){
-  const time = new Date().toLocaleTimeString();
-  statusBox.textContent += `\n[${time}] ${msg}`;
-  if(level === 'error') statusBox.classList.add('error');
-}
-function resetStatus(){
-  statusBox.textContent = 'Status: idle';
-  statusBox.classList.remove('error');
-}
-function withTimeout(promise, ms=20000){
-  let timeout;
-  const t = new Promise((_,reject)=>{
-    timeout=setTimeout(()=>reject(new Error('Timeout')),ms);
-  });
-  return Promise.race([promise.finally(()=>clearTimeout(timeout)),t]);
-}
+        <div class="row">
+          <div class="col">
+            <label for="password">Password</label>
+            <input id="password" type="password" class="input" placeholder="Choose a strong password" required />
+          </div>
+          <div class="col">
+            <label for="role">Role</label>
+            <select id="role" class="input">
+              <option value="patient">Patient</option>
+              <option value="doctor">Doctor</option>
+            </select>
+          </div>
+        </div>
 
-/* ================= PHOTO PREVIEW (UNCHANGED) ================= */
-const photoInput = $('photoInput');
-const photoPreview = $('photoPreview');
-$('chooseFileBtn').onclick = () => photoInput.click();
+        <label for="healthStatus">Health status (optional)</label>
+        <input id="healthStatus" class="input" placeholder="E.g. diabetic, hypertensive, pregnant" />
 
-photoInput.onchange = () => {
-  const f = photoInput.files[0];
-  if(!f) return;
-  const r = new FileReader();
-  r.onload = e => {
-    photoPreview.style.backgroundImage = `url(${e.target.result})`;
-    photoPreview.style.backgroundSize = 'cover';
-    photoPreview.textContent = '';
-  };
-  r.readAsDataURL(f);
-};
+        <label for="allergies">Allergies (optional)</label>
+        <input id="allergies" class="input" placeholder="List any allergies" />
 
-/* ================= FORM SUBMIT (ONLY THIS PART CHANGED) ================= */
-$('registerForm').addEventListener('submit', async (ev) => {
-  ev.preventDefault();
-  resetStatus();
+        <label>Profile photo (optional)</label>
+        <div class="file-row">
+          <div class="file-preview" id="photoPreview">No</div>
+          <div style="flex:1">
+            <input id="photoInput" type="file" accept="image/*" style="display:none" />
+            <div style="display:flex;gap:8px;align-items:center">
+              <button type="button" class="choose-btn" id="chooseFileBtn">Choose photo</button>
+              <div style="color:#28527a;font-size:13px">Max 3MB • JPG/PNG</div>
+            </div>
+          </div>
+        </div>
 
-  try {
-    const name = $('name').value.trim();
-    const email = $('email').value.trim();
-    const password = $('password').value;
-    const role = $('role').value;
+        <div class="actions">
+          <button id="registerBtn" class="btn-primary" type="submit">Create account</button>
+          <button id="clearBtn" type="button" class="btn-ghost">Clear</button>
+        </div>
 
-    if(!name || !email || !password){
-      alert('Required fields missing');
-      return;
+        <div style="margin-top:10px;font-size:13px;color:#325b7f">
+          By creating an account you agree to our <a href="#" style="color:#0d47a1;text-decoration:underline">Terms</a> & <a href="#" style="color:#0d47a1;text-decoration:underline">Privacy</a>.
+        </div>
+
+        <!-- hidden status box for debugging -->
+        <pre id="statusBox" aria-live="polite">Status: idle</pre>
+      </form>
+    </section>
+
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-storage.js";
+
+    // your firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyDav5CAOhVEUs7czI8zAO9Jogn-B30OLSU",
+      authDomain: "vaidya-244c9.firebaseapp.com",
+      projectId: "vaidya-244c9",
+      storageBucket: "vaidya-244c9.firebasestorage.app",
+      messagingSenderId: "541936193390",
+      appId: "1:541936193390:web:bd9bcb63230501126bbb7f",
+      measurementId: "G-127KRB6XQZ"
+    };
+
+    // init firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    // helpers
+    const $ = id => document.getElementById(id);
+    const statusBox = $('statusBox');
+    function status(msg, level='info'){
+      const time = new Date().toLocaleTimeString();
+      const line = [${time}] ${msg};
+      statusBox.textContent = statusBox.textContent + '\\n' + line;
+      console.log('[register]', msg);
+      if(level === 'error') statusBox.classList.add('error');
+      statusBox.scrollTop = statusBox.scrollHeight;
+    }
+    function resetStatus(){ statusBox.textContent = 'Status: idle'; statusBox.classList.remove('error'); }
+
+    // small timeout wrapper
+    function withTimeout(promise, ms=20000){
+      let timeout;
+      const t = new Promise((_,reject) => { timeout = setTimeout(()=> reject(new Error('Operation timed out after ' + ms + 'ms')), ms); });
+      return Promise.race([promise.then(v=>{clearTimeout(timeout); return v}), t]);
     }
 
-    $('registerBtn').disabled = true;
-
-    const cred = await withTimeout(
-      createUserWithEmailAndPassword(auth, email, password), 20000
-    );
-
-    await updateProfile(cred.user, { displayName: name });
-
-    /* 🔴 ONLY REPLACED BLOCK (Firebase → Cloudinary) */
-    let photoURL = '';
-    const file = photoInput.files[0];
-    if(file){
-      status('Uploading photo to Cloudinary...');
-      photoURL = await withTimeout(uploadToCloudinary(file), 30000);
-      await updateProfile(cred.user, { photoURL });
-      status('Photo uploaded');
-    }
-
-    await setDoc(doc(db,'users',cred.user.uid),{
-      name,
-      email,
-      role,
-      photoURL,
-      createdAt: serverTimestamp()
+    // UI: photo chooser + preview
+    const photoInput = $('photoInput');
+    const photoPreview = $('photoPreview');
+    $('chooseFileBtn').addEventListener('click', () => photoInput.click());
+    photoInput.addEventListener('change', () => {
+      const f = photoInput.files[0];
+      if(!f){ photoPreview.textContent = 'No'; return; }
+      if(f.size > 3 * 1024 * 1024){ alert('File too large (max 3MB)'); photoInput.value = ''; photoPreview.textContent = 'No'; return; }
+      const reader = new FileReader();
+      reader.onload = e => {
+        photoPreview.style.backgroundImage = url(${e.target.result});
+        photoPreview.style.backgroundSize = 'cover';
+        photoPreview.textContent = '';
+      };
+      reader.readAsDataURL(f);
     });
 
-    alert('Account created successfully');
-    window.location.replace('login.html');
+    // clear form
+    $('clearBtn').addEventListener('click', () => {
+      $('registerForm').reset();
+      photoPreview.style.backgroundImage = '';
+      photoPreview.textContent = 'No';
+    });
 
-  } catch(err){
-    alert(err.message);
-    $('registerBtn').disabled = false;
-  }
-});
-</script>
+    // submission
+    $('registerForm').addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      resetStatus();
+      try {
+        const name = $('name').value.trim();
+        const age = $('age').value.trim();
+        const phone = $('phone').value.trim();
+        const email = $('email').value.trim();
+        const password = $('password').value;
+        const role = $('role').value;
+        const healthStatus = $('healthStatus').value.trim();
+        const allergies = $('allergies').value.trim();
+
+        if(!name || !email || !password){ alert('Name, email and password are required'); status('Missing fields','error'); return; }
+
+        // UI lock
+        $('registerBtn').disabled = true;
+        $('registerBtn').textContent = 'Creating account...';
+
+        status('Creating user account...');
+        const cred = await withTimeout(createUserWithEmailAndPassword(auth, email, password), 20000);
+        status('Auth user created: ' + cred.user.uid);
+
+        // update display name
+        try { await withTimeout(updateProfile(cred.user, { displayName: name }), 8000); status('Display name set'); } catch(e){ console.warn(e); status('Could not set displayName','error'); }
+
+        // photo upload
+        let photoURL = '';
+        const file = photoInput.files[0];
+        if(file){
+          try {
+            status('Uploading profile photo...');
+            const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+            const path = profiles/${cred.user.uid}/avatar_${Date.now()}.${ext};
+            const storageRef = ref(storage, path);
+            await withTimeout(uploadBytes(storageRef, file), 30000);
+            photoURL = await withTimeout(getDownloadURL(storageRef), 15000);
+            status('Photo uploaded');
+            try { await withTimeout(updateProfile(cred.user, { photoURL }), 8000); status('Auth profile photo set'); } catch(e){ console.warn(e); }
+          } catch(e){
+            console.warn('photo upload failed', e);
+            status('Photo upload failed: ' + (e.message || e), 'error');
+          }
+        } else {
+          status('No profile photo provided');
+        }
+
+        // write Firestore doc
+        const userDoc = {
+          name,
+          age: age ? Number(age) : null,
+          phone,
+          email,
+          role,
+          healthStatus,
+          allergies,
+          photoURL: photoURL || '',
+          verified: role === 'doctor' ? false : true,
+          createdAt: serverTimestamp()
+        };
+        status('Saving user document to Firestore...');
+        await withTimeout(setDoc(doc(db, 'users', cred.user.uid), userDoc), 20000);
+        status('User document saved');
+
+        // done
+        alert('Account created — please log in.');
+        window.location.replace('login.html');
+
+      } catch(err){
+        console.error('Registration error', err);
+        status('Registration failed: ' + (err?.message || err), 'error');
+        alert('Registration failed: ' + (err?.message || err));
+        $('registerBtn').disabled = false;
+        $('registerBtn').textContent = 'Create account';
+      }
+    });
+  </script>
 </body>
 </html>
