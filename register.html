@@ -237,14 +237,8 @@
   </main>
 
   <script type="module">
-    import { getStorage, ref, uploadBytes, getDownloadURL }
-from "https://www.gstatic.com/firebasejs/12.6.0/firebase-storage.js";
-
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-  
-
     import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-    
     import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
     import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-storage.js";
 
@@ -335,24 +329,6 @@ from "https://www.gstatic.com/firebasejs/12.6.0/firebase-storage.js";
 
         // update display name
         try { await withTimeout(updateProfile(cred.user, { displayName: name }), 8000); status('Display name set'); } catch(e){ console.warn(e); status('Could not set displayName','error'); }
-
-        const photoFile = document.getElementById("photo").files[0];
-
-const photoRef = ref(storage, `profilePhotos/${user.uid}.jpg`);
-await uploadBytes(photoRef, photoFile);
-      const photoURL = await getDownloadURL(photoRef);
-await setDoc(doc(db, "users", user.uid), {
-  name: name,
-  email: email,
-  role: "patient",
-  photoURL: photoURL,
-  createdAt: serverTimestamp()
-});
-photoURL: photoURL
-window.location.href = "dashboard.html";
-if (data.photoURL) {
-  avatar.style.backgroundImage = `url('${data.photoURL}')`;
-}
 
         // photo upload
         let photoURL = '';
