@@ -27500,5 +27500,222 @@ const healthData = [
     "explain": "Dehydration is commonly experienced and often manageable with home care. Seek medical attention for worsening symptoms, severe pain, breathing difficulty, or persistent high fever."
   }
 ];
+/* =========================================
+   ORIGINAL HEALTH DATA (AS IS)
+   ========================================= */
+
+const healthData = [
+  {
+    id: "hd0001",
+    symptom: "Motion sickness — chronic",
+    aliases: ["motion sickness", "motion_sickness"],
+    questions: [
+      "How long have you had the motion sickness?",
+      "Does anything make the motion sickness better or worse?",
+      "Any visual or hearing changes?",
+      "Do you have fever alongside the motion sickness?",
+      "Is the motion sickness constant or does it come and go?"
+    ],
+    household_cure: [
+      "Rest",
+      "Stay hydrated",
+      "Consume ginger or peppermint tea"
+    ],
+    medical_cure: [
+      "Ondansetron 4 mg for severe nausea",
+      "Paracetamol 500 mg as needed"
+    ],
+    prescriptions: [
+      "OTC: Antiemetic as per label"
+    ],
+    specialist: "Allergist",
+    risk_level: "medium"
+  },
+
+  {
+    id: "hd0004",
+    symptom: "Jaundice — during pregnancy",
+    aliases: ["jaundice"],
+    questions: [
+      "Have you noticed yellowing of eyes or skin?",
+      "Is urine dark in color?",
+      "Any abdominal pain?"
+    ],
+    household_cure: [
+      "Stay hydrated",
+      "Rest"
+    ],
+    medical_cure: [
+      "Paracetamol 500 mg as needed",
+      "Ibuprofen 200 mg"
+    ],
+    prescriptions: [
+      "OTC: Antacid"
+    ],
+    specialist: "Dermatologist",
+    risk_level: "medium"
+  },
+
+  {
+    id: "hd0025",
+    symptom: "Shortness of breath — after trauma",
+    aliases: ["shortness of breath", "breathlessness"],
+    questions: [
+      "Did breathing difficulty start suddenly?",
+      "Any chest pain?",
+      "Any recent injury?"
+    ],
+    household_cure: [
+      "Rest",
+      "Steam inhalation"
+    ],
+    medical_cure: [
+      "Salbutamol inhaler",
+      "Ibuprofen"
+    ],
+    prescriptions: [
+      "OTC: Painkiller"
+    ],
+    specialist: "Nephrologist",
+    risk_level: "low"
+  }
+];
+
+/* =========================================
+   SAFETY CLASSIFICATION
+   ========================================= */
+
+function getSafetyFlag(symptom) {
+  const s = symptom.toLowerCase();
+
+  if (
+    s.includes("shortness of breath") ||
+    s.includes("breath") ||
+    s.includes("jaundice") ||
+    s.includes("pregnancy") ||
+    s.includes("fracture") ||
+    s.includes("hypothermia")
+  ) {
+    return "emergency";
+  }
+
+  if (
+    s.includes("kidney") ||
+    s.includes("shingles") ||
+    s.includes("severe")
+  ) {
+    return "caution";
+  }
+
+  return "normal";
+}
+
+/* =========================================
+   SPECIALIST AUTO FIX
+   ========================================= */
+
+const specialistMap = {
+  "shortness of breath": "Pulmonologist",
+  "breath": "Pulmonologist",
+  "jaundice": "Gastroenterologist",
+  "pregnancy": "OB/GYN",
+  "fracture": "Orthopedist",
+  "kidney": "Urologist",
+  "hypothermia": "Emergency Physician"
+};
+
+function fixSpecialist(entry) {
+  const text = entry.symptom.toLowerCase();
+  for (const key in specialistMap) {
+    if (text.includes(key)) {
+      entry.specialist = specialistMap[key];
+    }
+  }
+  return entry;
+}
+
+/* =========================================
+   SANITIZE MEDICAL DATA
+   ========================================= */
+
+function sanitizeEntry(entry) {
+  const safety = getSafetyFlag(entry.symptom);
+
+  entry.safety_flag = safety;
+
+  // Emergency → no home care or OTC
+  if (safety === "emergency") {
+    entry.household_cure = [];
+    entry.prescriptions = [];
+    entry.note =
+      "Emergency condition detected. Do NOT self-medicate. Consult doctor immediately.";
+  }
+
+  // Pregnancy → remove unsafe medicines
+  if (entry.symptom.toLowerCase().includes("pregnancy")) {
+    entry.medical_cure = entry.medical_cure.filter(
+      m => !m.toLowerCase().includes("ibuprofen")
+    );
+  }
+
+  return entry;
+}
+
+/* =========================================
+   FINAL SAFE DATA PIPELINE
+   ========================================= */
+
+const safeHealthData = healthData.map(item =>
+  fixSpecialist(sanitizeEntry({ ...item }))
+);
+
+/* =========================================
+   DECISION ENGINE (USE THIS IN APP)
+   ========================================= */
+
+function evaluateSymptoms(userSymptoms = []) {
+  const dangerWords = [
+    "shortness of breath",
+    "breathlessness",
+    "pregnant",
+    "pregnancy",
+    "jaundice",
+    "fracture",
+    "hypothermia"
+  ];
+
+  const emergency = userSymptoms.some(s =>
+    dangerWords.some(d => s.toLowerCase().includes(d))
+  );
+
+  if (emergency) {
+    return {
+      category: 7,
+      showOTC: false,
+      showHomeCare: false,
+      showDoctor: true,
+      message: "Emergency detected. Immediate medical attention required."
+    };
+  }
+
+  return {
+    category: "normal",
+    showOTC: true,
+    showHomeCare: true,
+    showDoctor: false
+  };
+}
+
+/* =========================================
+   EXPORT
+   ========================================= */
+
+// Browser
+// window.safeHealthData = safeHealthData;
+// window.evaluateSymptoms = evaluateSymptoms;
+
+// Node / Backend
+// module.exports = { safeHealthData, evaluateSymptoms };
+
 
 export default healthData;
