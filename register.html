@@ -84,8 +84,6 @@
       border:1px solid rgba(2,12,34,0.04);
       color:#0b2b44;
     }
-    #statusBox{display:none;}
-
 
     .row {display:flex;gap:10px}
     .col{flex:1}
@@ -224,8 +222,7 @@
 
         <div class="actions">
           <button id="registerBtn" class="btn-primary" type="submit">Create account</button>
-          <button id="clearBtn" type="button" class="btn-ghost">Reset</button>
-
+          <button id="clearBtn" type="button" class="btn-ghost">Clear</button>
         </div>
 
         <div style="margin-top:10px;font-size:13px;color:#325b7f">
@@ -233,7 +230,7 @@
         </div>
 
         <!-- hidden status box for debugging -->
-        <pre id="statusBox" aria-live="polite">Status: idle</pre>
+       <!-- <pre id="statusBox" aria-live="polite">Status: idle</pre>-->
       </form>
     </section>
 
@@ -300,20 +297,11 @@
     });
 
     // clear form
-  $('clearBtn').addEventListener('click', () => {
-  // Reset form fields
-  $('registerForm').reset();
-
-  // Reset photo preview
-  photoPreview.style.backgroundImage = '';
-  photoPreview.textContent = 'No';
-
-  // Reset status box and SHOW it
-  statusBox.style.display = 'block';
-  resetStatus();
-  status('Form reset successfully');
-});
-
+    $('clearBtn').addEventListener('click', () => {
+      $('registerForm').reset();
+      photoPreview.style.backgroundImage = '';
+      photoPreview.textContent = 'No';
+    });
 
     // submission
     $('registerForm').addEventListener('submit', async (ev) => {
