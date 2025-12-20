@@ -175,10 +175,30 @@
     .muted-2{color:#9aa3ab;font-size:13px}
     .creator-links{display:flex;gap:8px;margin-top:8px}
     .creator-links a{font-size:13px;padding:8px 10px;border-radius:8px;background:#fff;border:1px solid rgba(2,6,23,0.04);color:var(--primary-600)}
+    .top {
+      height: 90vh; /* adjust as needed */
+      background-image: 
+      linear-gradient(
+       rgba(0, 0, 0, 0.55),
+       rgba(0, 0, 0, 0.55)
+      ),
+      url("back.jpg");
+
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+       color: #ffffff;
+    }
+
   </style>
 </head>
 <body>
-  <header>
+  <header class="top">
     <div class="top">
       <div class="brand wrap" style="width:100%;display:flex;align-items:center">
         <div class="brand-logo" aria-hidden="true">V</div>
