@@ -264,7 +264,7 @@
     const statusBox = $('statusBox');
     function status(msg, level='info'){
       const time = new Date().toLocaleTimeString();
-      const line = [${time}] ${msg};
+      const line = `[${time}] ${msg}`;
       statusBox.textContent = statusBox.textContent + '\\n' + line;
       console.log('[register]', msg);
       if(level === 'error') statusBox.classList.add('error');
@@ -289,7 +289,7 @@
       if(f.size > 3 * 1024 * 1024){ alert('File too large (max 3MB)'); photoInput.value = ''; photoPreview.textContent = 'No'; return; }
       const reader = new FileReader();
       reader.onload = e => {
-        photoPreview.style.backgroundImage = url(${e.target.result});
+        photoPreview.style.backgroundImage = `url(${e.target.result})`;
         photoPreview.style.backgroundSize = 'cover';
         photoPreview.textContent = '';
       };
@@ -337,7 +337,7 @@
           try {
             status('Uploading profile photo...');
             const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
-            const path = profiles/${cred.user.uid}/avatar_${Date.now()}.${ext};
+            const path = `profiles/${cred.user.uid}/avatar_${Date.now()}.${ext}`;
             const storageRef = ref(storage, path);
             await withTimeout(uploadBytes(storageRef, file), 30000);
             photoURL = await withTimeout(getDownloadURL(storageRef), 15000);
